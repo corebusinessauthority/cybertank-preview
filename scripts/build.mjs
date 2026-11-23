@@ -11,6 +11,7 @@ const files = [
   [path.join(root, 'index.html'), path.join(out, 'index.html')],
   [path.join(root, 'style.css'), path.join(out, 'style.css')],
   [path.join(root, 'metal.jpg'), path.join(out, 'metal.jpg')],
+  [path.join(root, 'snake-metal.jpg'), path.join(out, 'snake-metal.jpg')],
 ];
 for (const [source, destination] of files) await copyFile(source, destination);
 await mkdir(path.join(out, 'vendor'), { recursive: true });
@@ -21,7 +22,7 @@ for (const name of ['three.core.js', 'three.module.js']) {
 }
 await copyFile(path.join(root, 'vendor', 'LICENSE'), path.join(out, 'vendor', 'LICENSE'));
 await copyFile(path.join(root, 'vendor', 'LICENSE'), path.join(itch, 'vendor', 'LICENSE'));
-for (const name of ['app.js', 'style.css', 'metal.jpg']) {
+for (const name of ['app.js', 'style.css', 'metal.jpg', 'snake-metal.jpg']) {
   await copyFile(path.join(out, name), path.join(itch, name));
 }
 await copyFile(path.join(out, 'index.html'), path.join(itch, 'index.html'));

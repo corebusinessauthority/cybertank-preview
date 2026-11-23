@@ -5,11 +5,12 @@ const error = document.getElementById('scene-error');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x010503);
-scene.fog = new THREE.FogExp2(0x010503, 0.012);
+scene.fog = new THREE.FogExp2(0x010503, 0.006);
 
-const camera = new THREE.PerspectiveCamera(39, 1, 0.1, 90);
-camera.position.set(0, 5.7, 13.5);
-camera.lookAt(0, 4.1, -9.5);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 170);
+const tank = { width: 24, height: 14, depth: 80 };
+camera.position.set(0, tank.height / 2, 66);
+camera.lookAt(0, tank.height / 2, 0);
 
 let renderer;
 try {
@@ -17,7 +18,7 @@ try {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.45;
+  renderer.toneMappingExposure = 1.2;
   mount.append(renderer.domElement);
 } catch (failure) {
   error.hidden = false;
@@ -35,7 +36,6 @@ const blueLight = new THREE.PointLight(0x69cbe8, 12, 20, 2);
 blueLight.position.set(-7, 5, -4);
 scene.add(blueLight);
 
-const tank = { width: 18, height: 8.7, depth: 21 };
 const glyphs = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const matrixPlanes = [];
 function makeMatrixPlane(width, height, position, rotation, columns, rows, seed) {
@@ -54,11 +54,11 @@ function makeMatrixPlane(width, height, position, rotation, columns, rows, seed)
   scene.add(plane);
   matrixPlanes.push({ ctx, texture, columns, rows, seed, canvas });
 }
-makeMatrixPlane(18, 8.7, [0, 4.35, -21], [0, 0, 0], 32, 17, 1);
-makeMatrixPlane(21, 8.7, [-9, 4.35, -10.5], [0, Math.PI / 2, 0], 36, 17, 2);
-makeMatrixPlane(21, 8.7, [9, 4.35, -10.5], [0, -Math.PI / 2, 0], 36, 17, 3);
-makeMatrixPlane(18, 21, [0, 0, -10.5], [-Math.PI / 2, 0, 0], 32, 38, 4);
-makeMatrixPlane(18, 21, [0, 8.7, -10.5], [Math.PI / 2, 0, 0], 32, 38, 5);
+makeMatrixPlane(tank.width, tank.height, [0, 7, -40], [0, 0, 0], 32, 18, 1);
+makeMatrixPlane(tank.depth, tank.height, [-12, 7, 0], [0, Math.PI / 2, 0], 52, 18, 2);
+makeMatrixPlane(tank.depth, tank.height, [12, 7, 0], [0, -Math.PI / 2, 0], 52, 18, 3);
+makeMatrixPlane(tank.width, tank.depth, [0, 0, 0], [-Math.PI / 2, 0, 0], 32, 52, 4);
+makeMatrixPlane(tank.width, tank.depth, [0, 14, 0], [Math.PI / 2, 0, 0], 32, 52, 5);
 
 function drawMatrix(time) {
   for (const { ctx, texture, columns, rows, seed, canvas } of matrixPlanes) {
@@ -87,14 +87,22 @@ function drawMatrix(time) {
 
 const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(tank.width, tank.height, tank.depth));
 const tankFrame = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x50a68e, transparent: true, opacity: .48 }));
-tankFrame.position.set(0, tank.height / 2, -tank.depth / 2);
+tankFrame.position.set(0, tank.height / 2, 0);
 scene.add(tankFrame);
 
-const metalSkin = new THREE.MeshStandardMaterial({ color: 0x92a0a5, metalness: .76, roughness: .28 });
-const darkMetal = new THREE.MeshStandardMaterial({ color: 0x344550, metalness: .81, roughness: .31 });
-const seamMetal = new THREE.MeshStandardMaterial({ color: 0x202d34, metalness: .85, roughness: .34 });
-const spikeMetal = new THREE.MeshStandardMaterial({ color: 0x778c99, metalness: .67, roughness: .34 });
+const metalSkin = new THREE.MeshPhongMaterial({ color: 0xe3edf1, specular: 0xffffff, shininess: 116, emissive: 0x20282b });
+const darkMetal = new THREE.MeshPhongMaterial({ color: 0x56636b, specular: 0xf3f7fc, shininess: 120, emissive: 0x101719 });
+const seamMetal = new THREE.MeshPhongMaterial({ color: 0x25343b, specular: 0x9daeb7, shininess: 80 });
+const spikeMetal = new THREE.MeshPhongMaterial({ color: 0x697987, specular: 0xf4f8ff, shininess: 112, emissive: 0x111a1e });
+const orbSkin = new THREE.MeshPhongMaterial({ color: 0x394b55, specular: 0xffffff, shininess: 128, emissive: 0x172128 });
 new THREE.TextureLoader().load('./metal.jpg', texture => {
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(2.5, 2);
+  orbSkin.map = texture;
+  orbSkin.needsUpdate = true;
+});
+new THREE.TextureLoader().load('./snake-metal.jpg', texture => {
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(2.3, 1.8);
@@ -110,134 +118,222 @@ function orientBetween(mesh, a, b) {
   mesh.scale.y = direction.length();
 }
 
-function snakePath(t) {
-  return new THREE.Vector3(
-    -1.45 + 3.6 * Math.sin(t * .43),
-    4.25 + 1.24 * Math.sin(t * .71 + .6),
-    -8.4 + 3.0 * Math.sin(t * .28 + 1.2)
-  );
+const snakeHeading = new THREE.Vector3(.74, .08, .67).normalize();
+const snakeNodes = Array.from({ length: 8 }, (_, i) =>
+  new THREE.Vector3(-2.2, 7.5, 20).addScaledVector(snakeHeading, -.54 * i));
+const snakeParts = [
+  new THREE.Mesh(new THREE.CylinderGeometry(.62, .325, 1, 32), metalSkin),
+  new THREE.Mesh(new THREE.CylinderGeometry(.325, .4, 1, 32), metalSkin),
+];
+for (let node = 1; node < 7; node++) {
+  const radius = .4 - .2 * (node - 1) / 6;
+  const nextRadius = .4 - .2 * node / 6;
+  snakeParts.push(new THREE.Mesh(new THREE.CylinderGeometry(radius, nextRadius, 1, 32), metalSkin));
 }
-
-const snakeParts = [];
-const snakeSeams = [];
-for (let i = 0; i < 17; i++) {
-  const taper = 1 - Math.pow(i / 17, 1.7) * .86;
-  const radius = .41 * taper + .055;
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(radius * .96, radius, 1, 16, 1), i % 3 === 0 ? darkMetal : metalSkin);
-  scene.add(body);
-  snakeParts.push(body);
-  if (i < 16) {
-    const seam = new THREE.Mesh(new THREE.TorusGeometry(radius * .98, .025, 5, 18), seamMetal);
-    scene.add(seam);
-    snakeSeams.push(seam);
-  }
-}
-const tail = new THREE.Mesh(new THREE.ConeGeometry(.13, .86, 12), metalSkin);
+snakeParts.forEach(part => scene.add(part));
+const snakeSeams = Array.from({ length: 7 }, (_, i) => {
+  const radius = i === 0 ? .4 : .4 - .2 * (i - 1) / 6;
+  const seam = new THREE.Mesh(new THREE.TorusGeometry(radius * 1.005, .012, 5, 32), seamMetal);
+  scene.add(seam);
+  return seam;
+});
+const tail = new THREE.Mesh(new THREE.ConeGeometry(.2, .72, 24), metalSkin);
 scene.add(tail);
 
 const head = new THREE.Group();
-head.add(new THREE.Mesh(new THREE.SphereGeometry(.57, 18, 12), darkMetal));
-const mouth = new THREE.Mesh(new THREE.CircleGeometry(.49, 32), new THREE.MeshBasicMaterial({ color: 0x020202, side: THREE.DoubleSide }));
-mouth.position.z = .55;
+const headBody = new THREE.Mesh(new THREE.SphereGeometry(.62, 32, 20), metalSkin);
+headBody.scale.z = .58;
+head.add(headBody);
+const mouth = new THREE.Mesh(new THREE.CircleGeometry(.49, 32), new THREE.MeshBasicMaterial({ color: 0x010101, side: THREE.DoubleSide }));
+mouth.position.z = .39;
 head.add(mouth);
-const mouthRim = new THREE.Mesh(new THREE.TorusGeometry(.49, .078, 9, 36), metalSkin);
-mouthRim.position.z = .60;
+const mouthRim = new THREE.Mesh(new THREE.TorusGeometry(.50, .038, 8, 36), darkMetal);
+mouthRim.position.z = .405;
 head.add(mouthRim);
-const petalShape = new THREE.Shape();
-petalShape.moveTo(-.31, .34);
-petalShape.bezierCurveTo(-.55, .65, -.34, 1.12, 0, 1.43);
-petalShape.bezierCurveTo(.34, 1.12, .55, .65, .31, .34);
-petalShape.lineTo(-.31, .34);
-const petalGeometry = new THREE.ExtrudeGeometry(petalShape, { depth: .14, bevelEnabled: true, bevelThickness: .06, bevelSize: .045, bevelSegments: 2, steps: 1, curveSegments: 8 });
-for (let i = 0; i < 4; i++) {
-  const petal = new THREE.Mesh(petalGeometry, metalSkin);
-  petal.rotation.z = i * Math.PI / 2;
-  petal.position.z = .39;
-  head.add(petal);
-  const eye = new THREE.Mesh(new THREE.SphereGeometry(.09, 9, 7), new THREE.MeshBasicMaterial({ color: 0xe93424 }));
-  eye.position.set(-Math.sin(i * Math.PI / 2) * 1.09, Math.cos(i * Math.PI / 2) * 1.09, .60);
-  head.add(eye);
+function petalGeometry(innerHalf, shoulderHalf, tipRadius) {
+  const shape = new THREE.Shape();
+  shape.moveTo(-innerHalf, .45);
+  shape.quadraticCurveTo(-shoulderHalf, .66, 0, tipRadius);
+  shape.quadraticCurveTo(shoulderHalf, .66, innerHalf, .45);
+  shape.closePath();
+  return new THREE.ExtrudeGeometry(shape, {
+    depth: .045, bevelEnabled: true, bevelThickness: .018, bevelSize: .015,
+    bevelSegments: 2, steps: 1, curveSegments: 8,
+  });
 }
-const innerRed = new THREE.Mesh(new THREE.SphereGeometry(.13, 12, 8), new THREE.MeshBasicMaterial({ color: 0xd82820 }));
-innerRed.position.z = .57;
-head.add(innerRed);
+const mainPetal = petalGeometry(.18, .29, .89);
+const smallPetal = petalGeometry(.13, .20, .75);
+const petalEyes = [];
+for (let i = 0; i < 4; i++) {
+  const petal = new THREE.Mesh(mainPetal, darkMetal);
+  petal.rotation.z = i * Math.PI / 2;
+  petal.position.z = .405;
+  head.add(petal);
+  const filler = new THREE.Mesh(smallPetal, darkMetal);
+  filler.rotation.z = (i + .5) * Math.PI / 2;
+  filler.position.z = .40;
+  head.add(filler);
+  const eye = new THREE.Group();
+  eye.add(new THREE.Mesh(new THREE.SphereGeometry(.071, 12, 8), new THREE.MeshBasicMaterial({ color: 0xff351c })));
+  const diamond = new THREE.Mesh(new THREE.PlaneGeometry(.048, .048), new THREE.MeshBasicMaterial({ color: 0x570010, side: THREE.DoubleSide }));
+  diamond.rotation.z = Math.PI / 4;
+  diamond.position.z = .07;
+  eye.add(diamond);
+  eye.position.set(-Math.sin(i * Math.PI / 2) * .7, Math.cos(i * Math.PI / 2) * .7, .48);
+  head.add(eye);
+  petalEyes.push(eye);
+}
+const redEyeMaterial = new THREE.MeshBasicMaterial({ color: 0xe33320 });
+for (let i = 0; i < 7; i++) {
+  const a = i * Math.PI * 2 / 6;
+  const radius = i === 0 ? 0 : .15;
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(i === 0 ? .055 : .038, 10, 7), redEyeMaterial);
+  bulb.position.set(Math.cos(a) * radius, Math.sin(a) * radius, .43);
+  head.add(bulb);
+}
 const toothMaterial = new THREE.MeshStandardMaterial({ color: 0xd6d8c9, roughness: .42 });
-for (let i = 0; i < 12; i++) {
-  const angle = i * Math.PI * 2 / 12;
-  const tooth = new THREE.Mesh(new THREE.ConeGeometry(.055, .21, 5), toothMaterial);
-  tooth.position.set(Math.cos(angle) * .39, Math.sin(angle) * .39, .67);
-  tooth.rotation.z = angle + Math.PI / 2;
-  head.add(tooth);
+for (let ring = 0; ring < 2; ring++) {
+  for (let i = 0; i < 16; i++) {
+    const angle = i * Math.PI * 2 / 16;
+    const tooth = new THREE.Mesh(new THREE.ConeGeometry(.025 + .006 * ring, .16 - .04 * ring, 5), toothMaterial);
+    tooth.position.set(Math.cos(angle) * (.38 - .14 * ring), Math.sin(angle) * (.38 - .14 * ring), .44);
+    tooth.rotation.z = angle + Math.PI / 2;
+    head.add(tooth);
+  }
 }
 scene.add(head);
 
-function updateSnake(t) {
-  const points = Array.from({ length: 19 }, (_, i) => snakePath(t - i * .40));
-  for (let i = 0; i < snakeParts.length; i++) {
-    orientBetween(snakeParts[i], points[i], points[i + 1]);
-    if (i < snakeSeams.length) {
-      snakeSeams[i].position.copy(points[i + 1]);
-      snakeSeams[i].quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3().subVectors(points[i], points[i + 2]).normalize());
+const lateralEyes = [];
+for (let i = 0; i < 5; i++) {
+  for (const side of [-1, 1]) {
+    const eye = new THREE.Group();
+    eye.add(new THREE.Mesh(new THREE.SphereGeometry(.075, 10, 7), redEyeMaterial));
+    const pupil = new THREE.Mesh(new THREE.PlaneGeometry(.047, .047), new THREE.MeshBasicMaterial({ color: 0x570010, side: THREE.DoubleSide }));
+    pupil.rotation.z = Math.PI / 4;
+    pupil.position.z = .075;
+    eye.add(pupil);
+    scene.add(eye);
+    lateralEyes.push({ node: i + 1, side, eye });
+  }
+}
+
+function updateSnake(t, dt) {
+  const headPosition = snakeNodes[0];
+  const target = new THREE.Vector3(5.5 * Math.sin(t * .16 + .2), 7 + 2.5 * Math.sin(t * .22 + .8), 20 + 8 * Math.sin(t * .11 + 1.4));
+  const desired = target.sub(headPosition).multiplyScalar(.18).add(snakeHeading).normalize();
+  snakeHeading.lerp(desired, Math.min(1, dt * 2.2)).normalize();
+  headPosition.addScaledVector(snakeHeading, dt * (3.5 + .38 * Math.sin(t * .56)));
+  for (const [axis, min, max] of [['x', -10.9, 10.9], ['y', 1, 13], ['z', 8, 33]]) {
+    if (headPosition[axis] < min || headPosition[axis] > max) {
+      headPosition[axis] = THREE.MathUtils.clamp(headPosition[axis], min, max);
+      snakeHeading[axis] *= -.8;
+      snakeHeading.normalize();
     }
   }
-  const tip = points[17].clone().add(points[17].clone().sub(points[16]).normalize().multiplyScalar(.7));
-  orientBetween(tail, points[17], tip);
-  tail.scale.y = .86;
+  for (let i = 1; i < snakeNodes.length; i++) {
+    const offset = snakeNodes[i].clone().sub(snakeNodes[i - 1]);
+    if (offset.lengthSq() < .001) offset.copy(snakeHeading).negate();
+    const follow = snakeNodes[i - 1].clone().add(offset.normalize().multiplyScalar(.54));
+    snakeNodes[i].lerp(follow, Math.min(1, dt * 11));
+  }
+  const sideAxis = new THREE.Vector3().crossVectors(snakeHeading, unitY).normalize();
+  const points = snakeNodes.map((node, i) => node.clone().addScaledVector(sideAxis,
+    Math.sin(t * 5 - i * .95) * .12 * i / 7));
+  const neck = points[0].clone().lerp(points[1], .43);
+  orientBetween(snakeParts[0], points[0], neck);
+  orientBetween(snakeParts[1], neck, points[1]);
+  for (let i = 1; i < 7; i++) orientBetween(snakeParts[i + 1], points[i], points[i + 1]);
+  for (let i = 0; i < snakeSeams.length; i++) {
+    snakeSeams[i].position.copy(points[i + 1]);
+    const tangent = points[Math.max(0, i)].clone().sub(points[Math.min(7, i + 2)]).normalize();
+    snakeSeams[i].quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), tangent);
+  }
+  const backward = points[7].clone().sub(points[6]).normalize();
+  const tip = points[7].clone().addScaledVector(backward, .72);
+  orientBetween(tail, tip, points[7]);
   head.position.copy(points[0]);
-  const forward = new THREE.Vector3().subVectors(points[0], points[2]).normalize();
-  const towardViewer = new THREE.Vector3().subVectors(camera.position, points[0]).normalize();
-  head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), forward.lerp(towardViewer, .7).normalize());
+  const forward = points[0].clone().sub(points[1]).normalize();
+  const towardViewer = camera.position.clone().sub(points[0]).normalize();
+  head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), forward.lerp(towardViewer, .2).normalize());
+  for (const { node, side, eye } of lateralEyes) {
+    const tangent = points[node - 1].clone().sub(points[node + 1]).normalize();
+    const outward = new THREE.Vector3().crossVectors(tangent, unitY).normalize().multiplyScalar(side);
+    const radius = .4 - .2 * (node - 1) / 6;
+    eye.position.copy(points[node]).addScaledVector(outward, radius * .98);
+    eye.lookAt(camera.position);
+  }
 }
 
 function makeSpikeball() {
   const orb = new THREE.Group();
-  const shell = new THREE.Mesh(new THREE.SphereGeometry(.86, 24, 18), darkMetal);
+  const radius = 1.2;
+  const shell = new THREE.Mesh(new THREE.SphereGeometry(radius, 28, 18), orbSkin);
   orb.add(shell);
-  const coneGeometry = new THREE.ConeGeometry(.10, .37, 6);
-  for (let i = 0; i < 34; i++) {
-    const y = 1 - (i + .5) * 2 / 34;
-    const radius = Math.sqrt(1 - y * y);
-    const angle = i * 2.3999632297;
-    const normal = new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-    if (normal.z > .67 && Math.abs(normal.y) < .38 && Math.abs(normal.x) < .48) continue;
-    const spike = new THREE.Mesh(coneGeometry, spikeMetal);
-    spike.position.copy(normal).multiplyScalar(1.01);
-    spike.quaternion.setFromUnitVectors(unitY, normal);
-    orb.add(spike);
+  for (let ring = 0; ring < 4; ring++) {
+    const latitude = -.92 + 1.84 * (ring + .5) / 4;
+    for (let i = 0; i < 9; i++) {
+      const longitude = Math.PI * 2 * (i + (ring % 2) * .5) / 9;
+      const normal = new THREE.Vector3(Math.cos(latitude) * Math.cos(longitude), Math.sin(latitude), Math.cos(latitude) * Math.sin(longitude));
+      if (normal.z > .78 && Math.abs(normal.x) < .47 && normal.y > -.46 && normal.y < .31) continue;
+      const length = radius * (.28 + .045 * Math.sin(i * 1.9 + ring));
+      const spike = new THREE.Mesh(new THREE.ConeGeometry(radius * .09, length, 6), spikeMetal);
+      spike.position.copy(normal).multiplyScalar(radius + length / 2);
+      spike.quaternion.setFromUnitVectors(unitY, normal);
+      orb.add(spike);
+    }
   }
   const eye = new THREE.Group();
   const eyeShape = new THREE.Shape();
-  eyeShape.moveTo(-.46, 0);
-  eyeShape.quadraticCurveTo(0, .30, .46, 0);
-  eyeShape.quadraticCurveTo(0, -.34, -.46, 0);
+  eyeShape.moveTo(-.53, -.08);
+  eyeShape.quadraticCurveTo(0, .24, .53, -.08);
+  eyeShape.quadraticCurveTo(0, -.46, -.53, -.08);
   eye.add(new THREE.Mesh(new THREE.ShapeGeometry(eyeShape), new THREE.MeshBasicMaterial({ color: 0x020205, side: THREE.DoubleSide })));
-  const iris = new THREE.Mesh(new THREE.CircleGeometry(.205, 26), new THREE.MeshBasicMaterial({ color: 0xe81926 }));
+  const gaze = new THREE.Group();
+  const iris = new THREE.Mesh(new THREE.CircleGeometry(.24, 28), new THREE.MeshBasicMaterial({ color: 0xe81926 }));
   iris.position.z = .013;
-  eye.add(iris);
-  const pupil = new THREE.Mesh(new THREE.CircleGeometry(.09, 22), new THREE.MeshBasicMaterial({ color: 0x000000 }));
+  gaze.add(iris);
+  const pupil = new THREE.Mesh(new THREE.CircleGeometry(.112, 22), new THREE.MeshBasicMaterial({ color: 0x000000 }));
   pupil.position.z = .018;
-  eye.add(pupil);
-  eye.position.set(0, .03, .88);
+  gaze.add(pupil);
+  eye.add(gaze);
+  eye.position.set(0, .12, radius * 1.018);
   orb.add(eye);
   scene.add(orb);
-  return { orb, eye };
+  return { orb, eye, gaze, position: new THREE.Vector3(), velocity: new THREE.Vector3() };
 }
 const twins = [makeSpikeball(), makeSpikeball()];
-function updateTwins(t) {
-  const locations = [
-    [-5.6 + .68 * Math.sin(t * .53), 5.4 + .42 * Math.sin(t * .8), -10.0 + .7 * Math.sin(t * .29)],
-    [5.5 + .7 * Math.sin(t * .4 + 2), 3.7 + .6 * Math.sin(t * .68 + 1), -8.1 + .8 * Math.sin(t * .32 + 1)],
-  ];
+twins[0].position.set(-7.4, 10.3, 16);
+twins[0].velocity.set(.28, .06, .17);
+twins[1].position.set(7.2, 4.8, 22);
+twins[1].velocity.set(-.19, .11, -.24);
+function updateTwins(t, dt) {
   for (let i = 0; i < 2; i++) {
-    twins[i].orb.position.set(...locations[i]);
-    twins[i].orb.rotation.y = .14 * Math.sin(t * .35 + i);
-    const blink = (t + i * 2.3) % 5.6;
-    twins[i].eye.scale.y = blink < .19 ? Math.max(.05, Math.abs(blink - .095) / .095) : 1;
+    const twin = twins[i];
+    const phase = i * 2.31;
+    const homeX = i === 0 ? -7 : 7;
+    const homeY = i === 0 ? 9.5 : 5;
+    const homeZ = i === 0 ? 18 : 26;
+    twin.velocity.x += (Math.sin(t * .37 + phase) * .4 + (homeX - twin.position.x) * .16) * dt;
+    twin.velocity.y += (homeY + Math.sin(t * .61 + phase) * 2 - twin.position.y) * .42 * dt;
+    twin.velocity.z += (homeZ + Math.cos(t * .29 + phase) * 6 - twin.position.z) * .12 * dt;
+    twin.velocity.multiplyScalar(Math.pow(.995, dt * 60));
+    twin.position.addScaledVector(twin.velocity, dt);
+    for (const [axis, min, max] of [['x', -10.8, 10.8], ['y', 1.2, 12.8], ['z', -38.8, 38.8]]) {
+      if (twin.position[axis] < min || twin.position[axis] > max) {
+        twin.position[axis] = THREE.MathUtils.clamp(twin.position[axis], min, max);
+        twin.velocity[axis] *= -.65;
+      }
+    }
+    twin.orb.position.copy(twin.position);
+    const blink = (t + i * .43) % 5.1;
+    twin.eye.scale.y = blink < .26 ? Math.max(.04, 1 - Math.sin(Math.PI * blink / .26)) : 1;
+    twin.gaze.position.x = .08 * Math.sin(t * 1.13 + i * .61);
+    twin.gaze.position.y = -.1 + .055 * Math.sin(t * .83 + .5 + i);
   }
 }
 
 const smiley = new THREE.Group();
-const smileyMaterial = new THREE.MeshBasicMaterial({ color: 0x9d38e0, transparent: true, opacity: .55, depthWrite: false, side: THREE.DoubleSide });
+const smileyMaterial = new THREE.MeshPhongMaterial({ color: 0xa22ee6, emissive: 0x10041a, shininess: 112, transparent: true, opacity: .3, depthWrite: false, side: THREE.DoubleSide });
 const smileyShell = new THREE.Mesh(new THREE.SphereGeometry(.92, 28, 20), smileyMaterial);
 smileyShell.renderOrder = 1;
 smiley.add(smileyShell);
@@ -256,10 +352,24 @@ for (let i = 0; i <= 18; i++) {
 const smile = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(smilePoints), 18, .027, 6, false), faceMaterial);
 smile.renderOrder = 5;
 smiley.add(smile);
+smiley.scale.setScalar(.85);
+smiley.position.set(1.5, 10, 13);
 scene.add(smiley);
-function updateSmiley(t) {
-  smiley.position.set(1.65 + 1.35 * Math.sin(t * .37), 2.43 + .54 * Math.sin(t * .77), -5.9 + .7 * Math.sin(t * .3));
-  smileyMaterial.color.setHSL((t * .045 + .72) % 1, .78, .53);
+const smileyVelocity = new THREE.Vector3(.42, .16, .38);
+function updateSmiley(t, dt) {
+  smileyVelocity.x += (Math.sin(t * .32 + 1.7) * .36 + (1.5 - smiley.position.x) * .12) * dt;
+  smileyVelocity.y += (Math.cos(t * .44 + .8) * .28 + (10 - smiley.position.y) * .18) * dt;
+  smileyVelocity.z += (Math.sin(t * .28 + 2.1) * .42 + (13 - smiley.position.z) * .12) * dt;
+  smileyVelocity.multiplyScalar(Math.pow(.998, dt * 60));
+  smiley.position.addScaledVector(smileyVelocity, dt);
+  for (const [axis, min, max] of [['x', -11, 11], ['y', 1, 13], ['z', -39, 39]]) {
+    if (smiley.position[axis] < min || smiley.position[axis] > max) {
+      smiley.position[axis] = THREE.MathUtils.clamp(smiley.position[axis], min, max);
+      smileyVelocity[axis] *= -.83;
+    }
+  }
+  smileyMaterial.color.setHSL((t * .055) % 1, 1, .5);
+  smileyMaterial.emissive.copy(smileyMaterial.color).multiplyScalar(.13);
 }
 
 function resize() {
@@ -267,6 +377,9 @@ function resize() {
   const height = Math.max(1, mount.clientHeight);
   renderer.setSize(width, height, false);
   camera.aspect = width / height;
+  const frontFit = Math.max(20, tank.width / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect) * 1.06);
+  camera.position.z = tank.depth / 2 + frontFit;
+  camera.lookAt(0, tank.height / 2, 0);
   camera.updateProjectionMatrix();
 }
 new ResizeObserver(resize).observe(mount);
@@ -278,15 +391,16 @@ const start = performance.now();
 function frame(now) {
   requestAnimationFrame(frame);
   if (document.hidden || now - lastFrame < 33) return;
+  const dt = Math.min(.05, (now - lastFrame) / 1000 || .033);
   lastFrame = now;
   const t = reducedMotion ? 5 : (now - start) / 1000;
   if (now - lastMatrixUpdate > 125) {
     drawMatrix(t);
     lastMatrixUpdate = now;
   }
-  updateSnake(t);
-  updateTwins(t);
-  updateSmiley(t);
+  updateSnake(t, dt);
+  updateTwins(t, dt);
+  updateSmiley(t, dt);
   renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
