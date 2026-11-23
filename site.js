@@ -317,17 +317,22 @@ async function renderDetail(packs) {
 
 const header = document.querySelector('.site-header');
 const categoryTrigger = header?.querySelector('.category-trigger');
+const categoryNav = header?.querySelector('.header-categories');
 if (header && categoryTrigger) {
+  let closeTimer;
   const setOpen = open => {
+    clearTimeout(closeTimer);
     header.classList.toggle('is-open', open);
     categoryTrigger.setAttribute('aria-expanded', String(open));
   };
-  header.addEventListener('pointerenter', () => {
-    if (matchMedia('(hover: hover) and (pointer: fine)').matches) setOpen(true);
-  });
-  header.addEventListener('pointerleave', () => {
-    if (matchMedia('(hover: hover) and (pointer: fine)').matches) setOpen(false);
-  });
+  const scheduleClose = () => {
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches)
+      closeTimer = setTimeout(() => setOpen(false), 120);
+  };
+  categoryTrigger.addEventListener('pointerenter', () => setOpen(true));
+  categoryTrigger.addEventListener('pointerleave', scheduleClose);
+  categoryNav?.addEventListener('pointerenter', () => setOpen(true));
+  categoryNav?.addEventListener('pointerleave', scheduleClose);
   header.addEventListener('focusin', () => setOpen(true));
   header.addEventListener('focusout', event => {
     if (!header.contains(event.relatedTarget)) setOpen(false);
