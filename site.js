@@ -12,6 +12,45 @@ function readCart() {
 
 function price(value) { return `${Number(value || 0).toFixed(2)} USDT`; }
 
+const UNIT_PRICES = Object.freeze({
+  smiley: 6.99,
+  hueSmiley: 12.99,
+  leech: 15.99,
+  cyberLeech: 25.99,
+  twins: 11.99,
+  cyberTwins: 20.99,
+  cyberTank: 8.99,
+  colorTank: 4.99,
+  customTank: 6.99,
+  animatedTank: 6.99,
+});
+
+function assetPrice(asset) {
+  if (asset === 'effect.fire') return 0;
+  if (asset === 'pet.smiley.hue') return UNIT_PRICES.hueSmiley;
+  if (asset.startsWith('pet.smiley.')) return UNIT_PRICES.smiley;
+  if (asset === 'pet.snake') return UNIT_PRICES.cyberLeech;
+  if (asset.startsWith('pet.snake.')) return UNIT_PRICES.leech;
+  if (asset.startsWith('pet.spikeball.twins.')) return UNIT_PRICES.twins;
+  if (asset === 'tank.matrix' || asset.startsWith('tank.cyber.')) return UNIT_PRICES.cyberTank;
+  if (asset === 'tank.custom') return UNIT_PRICES.customTank;
+  if (/^tank\.(neon|pulse|aurora)\./.test(asset)) return UNIT_PRICES.animatedTank;
+  if (asset.startsWith('tank.')) return UNIT_PRICES.colorTank;
+  return 0;
+}
+
+function packPrice(pack) {
+  const assets = [...pack.assets];
+  let total = 0;
+  if (assets.includes('pet.spikeball') && assets.includes('pet.spikeball.twin')) {
+    total += UNIT_PRICES.cyberTwins;
+    assets.splice(assets.indexOf('pet.spikeball.twin'), 1);
+    assets.splice(assets.indexOf('pet.spikeball'), 1);
+  }
+  total += assets.reduce((sum, asset) => sum + assetPrice(asset), 0);
+  return pack.category === 'bundle' ? Math.round(total * 0.95 * 100) / 100 : total;
+}
+
 function setupCart(packs) {
   const button = document.getElementById('cart-button');
   const count = document.getElementById('cart-count');
@@ -82,7 +121,6 @@ function kind(pack) {
 
 function accent(pack) {
   const name = pack.sku;
-  if (name.startsWith('cyber-tank-')) return '#b9c2cc';
   const choices = [
     ['rose', '#f08da9'], ['pink', '#ff93d3'], ['violet', '#b99aff'],
     ['amber', '#ffc579'], ['orange', '#ff9a70'], ['yellow', '#ffe477'],
@@ -185,7 +223,10 @@ function assetName(asset) {
     const [, style, color] = asset.split('.');
     if (['neon', 'pulse', 'aurora', 'cyber'].includes(style)) {
       const label = titleCase(color);
-      return style === 'cyber' ? `Cyber Tank — ${label}` : `${label} ${titleCase(style)} Tank`;
+      const variant = asset.split('.')[3];
+      return style === 'cyber'
+        ? `Cyber Tank — ${label}${variant ? ` ${titleCase(variant)}` : ''}`
+        : `${label} ${titleCase(style)} Tank`;
     }
     const [, existingColor, shade] = asset.split('.');
     return `${titleCase(existingColor)} Water Tank — ${titleCase(shade)}`;
@@ -260,7 +301,7 @@ function card(pack, addToCart) {
 async function getPacks() {
   const response = await fetch(`${root}packs.json`);
   if (!response.ok) throw new Error('The collection could not be loaded.');
-  return response.json();
+  return (await response.json()).map(pack => ({ ...pack, price: packPrice(pack) }));
 }
 
 function renderCatalog(packs, addToCart) {

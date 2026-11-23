@@ -1,7 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
 const file = new URL('../packs.json', import.meta.url);
-const packs = JSON.parse(await readFile(file, 'utf8'));
+const packs = JSON.parse(await readFile(file, 'utf8'))
+  .filter(pack => pack.sku !== 'spikeball-twins-metal-hue');
 const existing = new Set(packs.map(pack => pack.sku));
 const colors = ['amber', 'blue', 'lime', 'rose', 'violet'];
 const styles = [
@@ -34,6 +35,20 @@ for (const color of colors) {
       description: `The Cyber Tank in an ${color} color treatment, with its animated digital-wall atmosphere.`,
     assets: [`tank.cyber.${color}`],
   });
+}
+
+for (const color of colors) {
+  for (const shade of ['dark', 'light', 'classic']) {
+    const sku = `cyber-tank-${color}-${shade}`;
+    if (existing.has(sku)) continue;
+    packs.push({
+      sku,
+      name: `Cyber Tank — ${color[0].toUpperCase()}${color.slice(1)} ${shade[0].toUpperCase()}${shade.slice(1)}`,
+      category: 'tank',
+      description: `A ${shade} ${color} colorway of the Cyber Tank, with animated digital-wall atmosphere.`,
+      assets: [`tank.cyber.${color}.${shade}`],
+    });
+  }
 }
 
 await writeFile(file, `${JSON.stringify(packs, null, 2)}\n`);
