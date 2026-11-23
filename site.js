@@ -1,6 +1,76 @@
 const root = document.body.dataset.root || './';
 const page = document.body.dataset.page;
 const sku = document.body.dataset.sku;
+const CART_KEY = 'cyberpets-preview-cart';
+
+function readCart() {
+  try {
+    const value = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+    return Array.isArray(value) ? value.filter(item => item && item.sku) : [];
+  } catch { return []; }
+}
+
+function price(value) { return `$${Number(value || 0).toFixed(2)}`; }
+
+function setupCart(packs) {
+  const button = document.getElementById('cart-button');
+  const count = document.getElementById('cart-count');
+  if (!button || !count) return () => {};
+  const drawer = document.createElement('aside');
+  drawer.className = 'cart-drawer';
+  drawer.hidden = true;
+  drawer.setAttribute('aria-label', 'Shopping bag');
+  drawer.innerHTML = '<div class="cart-drawer__head"><h2>Your bag</h2><button class="cart-close" type="button" aria-label="Close shopping bag">×</button></div><div class="cart-items" id="cart-items"></div><div class="cart-drawer__foot"><span>Total</span><strong id="cart-total">$0.00</strong><small>Prices will be added when editions are available for sale.</small></div>';
+  document.body.append(drawer);
+  let items = readCart();
+  const itemsNode = drawer.querySelector('#cart-items');
+  const totalNode = drawer.querySelector('#cart-total');
+  function save() {
+    try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch {}
+  }
+  function render() {
+    const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
+    count.textContent = String(quantity);
+    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    totalNode.textContent = price(total);
+    itemsNode.replaceChildren();
+    if (!items.length) {
+      const empty = document.createElement('p');
+      empty.className = 'cart-empty';
+      empty.textContent = 'Your bag is empty.';
+      itemsNode.append(empty);
+      return;
+    }
+    for (const item of items) {
+      const row = document.createElement('div');
+      row.className = 'cart-item';
+      row.innerHTML = `<span>${item.name}<small>Qty ${item.quantity}</small></span><strong>${price(item.price * item.quantity)}</strong><button type="button" aria-label="Remove ${item.name}" data-remove="${item.sku}">×</button>`;
+      itemsNode.append(row);
+    }
+  }
+  function open(opened) {
+    drawer.hidden = !opened;
+    button.setAttribute('aria-expanded', String(opened));
+  }
+  button.addEventListener('click', () => open(drawer.hidden));
+  drawer.querySelector('.cart-close').addEventListener('click', () => open(false));
+  drawer.addEventListener('click', event => {
+    const remove = event.target.closest('[data-remove]');
+    if (!remove) return;
+    items = items.filter(item => item.sku !== remove.dataset.remove);
+    save();
+    render();
+  });
+  render();
+  return pack => {
+    const existing = items.find(item => item.sku === pack.sku);
+    if (existing) existing.quantity += 1;
+    else items.push({ sku: pack.sku, name: pack.name, price: Number(pack.price || 0), quantity: 1 });
+    save();
+    render();
+    open(true);
+  };
+}
 
 function kind(pack) {
   if (pack.category === 'bundle') return 'bundle';
@@ -129,7 +199,7 @@ function assetName(asset) {
 
 function titleCase(value) { return value.replace(/\b\w/g, letter => letter.toUpperCase()); }
 
-function card(pack) {
+function card(pack, addToCart) {
   const link = document.createElement('a');
   link.className = 'pack-card';
   link.href = `${root}packs/${encodeURIComponent(pack.sku)}/`;
@@ -142,6 +212,17 @@ function card(pack) {
   label.className = 'pack-card__name';
   label.textContent = pack.name;
   body.append(label);
+  const add = document.createElement('button');
+  add.className = 'card-add';
+  add.type = 'button';
+  add.textContent = '+';
+  add.setAttribute('aria-label', `Add ${pack.name} to shopping bag`);
+  add.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    addToCart(pack);
+  });
+  body.append(add);
   link.append(body);
   return link;
 }
@@ -152,7 +233,7 @@ async function getPacks() {
   return response.json();
 }
 
-function renderCatalog(packs) {
+function renderCatalog(packs, addToCart) {
   const grid = document.getElementById('card-grid');
   const buttons = [...document.querySelectorAll('.filter')];
   const search = document.getElementById('catalog-search');
@@ -172,7 +253,7 @@ function renderCatalog(packs) {
   function addPage() {
     if (rendered >= shown.length) return;
     const next = shown.slice(rendered, rendered + 24);
-    grid.append(...next.map(card));
+    grid.append(...next.map(pack => card(pack, addToCart)));
     rendered += next.length;
   }
   function maybeLoadMore() {
@@ -214,12 +295,14 @@ function renderCatalog(packs) {
   apply();
 }
 
-async function renderDetail(packs) {
+async function renderDetail(packs, addToCart) {
   const pack = packs.find(item => item.sku === sku);
   if (!pack) throw new Error('This edition does not exist.');
   document.title = `${pack.name} · CyberPets preview`;
   document.getElementById('pack-name').textContent = pack.name;
   document.getElementById('pack-description').textContent = pack.description;
+  const detailAdd = document.getElementById('detail-add');
+  if (detailAdd) detailAdd.addEventListener('click', () => addToCart(pack));
   document.getElementById('pack-note').textContent = pack.assets.some(id => id.startsWith('tank.'))
     ? 'Visual preview only. Purchases and downloads are handled separately.'
     : 'Creature shown in a demonstration Matrix tank. The tank is not included. Purchases and downloads are handled separately.';
@@ -329,7 +412,10 @@ if (header && backToTop) {
   syncHeader();
 }
 
-getPacks().then(packs => page === 'catalog' ? renderCatalog(packs) : renderDetail(packs))
+getPacks().then(packs => {
+  const addToCart = setupCart(packs);
+  return page === 'catalog' ? renderCatalog(packs, addToCart) : renderDetail(packs, addToCart);
+})
   .catch(error => {
     const target = document.getElementById(page === 'catalog' ? 'card-grid' : 'pack-media');
     if (target) target.textContent = error.message;
