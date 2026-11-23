@@ -2,14 +2,6 @@ const root = document.body.dataset.root || './';
 const page = document.body.dataset.page;
 const sku = document.body.dataset.sku;
 
-const glyphs = {
-  tank: `<svg viewBox="0 0 120 120" fill="none" stroke-width="3" stroke-linejoin="round"><path class="outline" d="M20 35 60 18l40 17v52L60 105 20 87V35Z M20 35l40 17 40-17M60 52v53"/><path class="outline" opacity=".45" d="M30 57v20m16-28v35m31-36v38m13-47v35"/></svg>`,
-  snake: `<svg viewBox="0 0 120 120" fill="none" stroke-width="7" stroke-linecap="round"><path class="outline" d="M21 91c20 7 42 3 48-17 5-15-16-29-12-44 3-13 20-16 35-7"/><circle class="fill" cx="95" cy="23" r="11"/><circle cx="97" cy="21" r="4" fill="#081016"/><path class="outline" stroke-width="2" d="M28 87l7 8m5-16 7 8m4-19 8 5m0-22 10 2m0-20 11-1"/></svg>`,
-  ball: `<svg viewBox="0 0 120 120" fill="none" stroke-width="3"><path class="outline" d="m60 11 6 12 11-8 2 15 15-2-5 14 14 7-11 9 10 11-14 5 5 15-15-2-4 15-11-9-11 10-7-14-14 4 2-15-14-4 9-12-10-9 13-7-5-15 15 2 6-14 10 9Z"/><circle class="outline" cx="60" cy="60" r="25"/><ellipse cx="60" cy="60" rx="16" ry="9" fill="#f5f5ec"/><circle cx="60" cy="60" r="7" fill="#db3749"/><circle cx="60" cy="60" r="3" fill="#05070c"/></svg>`,
-  smile: `<svg viewBox="0 0 120 120" fill="none" stroke-width="4" stroke-linecap="round"><circle class="outline" cx="60" cy="60" r="43"/><path class="outline" d="M43 72q17 22 34 0"/><circle class="fill" cx="44" cy="49" r="4"/><circle class="fill" cx="76" cy="49" r="4"/></svg>`,
-  bundle: `<svg viewBox="0 0 120 120" fill="none" stroke-width="3" stroke-linejoin="round"><path class="outline" d="M12 31 60 12l48 19v58l-48 19-48-19V31Z M12 31l48 19 48-19M60 50v58"/><circle class="outline" cx="60" cy="57" r="18"/><circle class="fill" cx="60" cy="57" r="6"/><path class="outline" d="M19 82q13-14 24-2m33-1q15-14 25-4"/></svg>`,
-};
-
 function kind(pack) {
   if (pack.category === 'bundle') return 'bundle';
   if (pack.assets.some(id => id.startsWith('tank.'))) return 'tank';
@@ -36,9 +28,49 @@ function cardArt(pack) {
   stage.style.setProperty('--accent', accent(pack));
   const box = document.createElement('div');
   box.className = 'card-pack';
-  box.innerHTML = `<span class="card-pack__front"><span class="card-glyph">${glyphs[kind(pack)]}</span></span>`;
+  const front = document.createElement('span');
+  front.className = 'card-pack__front';
+  const gallery = document.createElement('span');
+  const pictured = picturedAssets(pack);
+  gallery.className = `card-photos${pictured.length > 1 ? ' card-photos--mosaic' : ''}`;
+  if (pictured.length > 12) gallery.classList.add('card-photos--many');
+  for (const asset of pictured) {
+    const photo = document.createElement('img');
+    photo.src = `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
+    photo.alt = assetName(asset);
+    photo.loading = 'lazy';
+    gallery.append(photo);
+  }
+  front.append(gallery);
+  box.append(front);
   stage.append(box);
   return stage;
+}
+
+function posterSku(asset) {
+  if (asset === 'tank.matrix') return 'matrix-tank';
+  if (asset === 'tank.plain') return 'plain-tank';
+  if (asset === 'tank.custom') return 'custom-color-tank';
+  if (asset.startsWith('tank.')) {
+    const [, color, shade] = asset.split('.');
+    return `${color}-${shade}-tank`;
+  }
+  if (asset === 'pet.snake') return 'snake';
+  if (asset === 'pet.snake.transparent_black') return 'snake-transparent-black';
+  if (asset.startsWith('pet.snake.')) return `snake-${asset.slice('pet.snake.'.length).replaceAll('.', '-')}`;
+  if (asset === 'pet.spikeball') return 'spikeball';
+  if (asset === 'pet.spikeball.twin') return 'spikeball-twins';
+  if (asset.startsWith('pet.spikeball.twins.')) return `spikeball-twins-${asset.slice('pet.spikeball.twins.'.length).replaceAll(/[._]/g, '-')}`;
+  if (asset.startsWith('pet.smiley.')) return `smiley-${asset.slice('pet.smiley.'.length)}`;
+  throw new Error(`No character picture for ${asset}`);
+}
+
+function picturedAssets(pack) {
+  return pack.assets.filter(asset => asset.startsWith('tank.') || asset.startsWith('pet.'));
+}
+
+function assetName(asset) {
+  return asset.replace(/^(tank|pet)\./, '').replaceAll(/[._]/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
 }
 
 function card(pack) {
@@ -85,7 +117,7 @@ function renderCatalog(packs) {
       (filter === 'pet' ? kind(pack) === 'snake' || kind(pack) === 'ball' || kind(pack) === 'smile' :
         filter === 'tank' ? kind(pack) === 'tank' : pack.category === filter));
     grid.replaceChildren(...shown.map(card));
-    count.textContent = `${shown.length} editions`;
+    if (count) count.textContent = `${shown.length} editions`;
     for (const button of buttons) {
       const selected = button.dataset.filter === filter;
       button.classList.toggle('is-active', selected);
@@ -106,6 +138,21 @@ async function renderDetail(packs) {
     ? 'Visual preview only. Purchases and downloads are handled separately.'
     : 'Creature shown in a demonstration Matrix tank. The tank is not included. Purchases and downloads are handled separately.';
   document.getElementById('pack-art').append(cardArt(pack));
+  const contents = document.getElementById('pack-contents');
+  if (contents) {
+    for (const asset of picturedAssets(pack)) {
+      const entry = document.createElement('figure');
+      entry.className = 'included-item';
+      const photo = document.createElement('img');
+      photo.src = `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
+      photo.alt = assetName(asset);
+      photo.loading = 'lazy';
+      const name = document.createElement('figcaption');
+      name.textContent = assetName(asset);
+      entry.append(photo, name);
+      contents.append(entry);
+    }
+  }
   const media = document.getElementById('pack-media');
   const video = document.createElement('video');
   video.autoplay = true;

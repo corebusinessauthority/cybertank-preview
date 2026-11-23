@@ -17,6 +17,20 @@ const allAssets = [...new Set(packs.flatMap(pack => pack.assets))].sort();
 const videoDirectory = path.join(root, 'videos');
 await mkdir(videoDirectory, { recursive: true });
 const expectedRawBytes = 960 * 540 * 3 * 144;
+const tankColors = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'violet', 'pink'];
+const tankShades = ['light', 'classic', 'dark'];
+function tankIndex(assets) {
+  if (assets.includes('tank.matrix')) return 0;
+  if (assets.includes('tank.plain')) return 1;
+  if (assets.includes('tank.custom')) return 39;
+  for (const id of assets) {
+    const [, color, shade] = id.split('.');
+    const hue = tankColors.indexOf(color);
+    const tone = tankShades.indexOf(shade);
+    if (hue >= 0 && tone >= 0) return 40 + hue * 3 + tone;
+  }
+  return 0;
+}
 
 for (const [index, pack] of packs.entries()) {
   if (only && pack.sku !== only) continue;
@@ -37,7 +51,7 @@ for (const [index, pack] of packs.entries()) {
     // the public manifest/description remains the source of what's included.
     const enabled = new Set(pack.assets);
     if (![...enabled].some(id => id.startsWith('tank.'))) enabled.add('tank.matrix');
-    const tank = enabled.has('tank.matrix') ? 0 : 1;
+    const tank = tankIndex(pack.assets);
     const config = [
       'ACUARIO-SETTINGS-1', `tank ${tank}`, 'visible 1 1 1 1 1 1 1 1 1',
       'background 0 0 0', 'volume 0',
@@ -47,6 +61,7 @@ for (const [index, pack] of packs.entries()) {
     await writeFile(path.join(temporary, 'config', 'settings.txt'), config);
 
     const captureEnv = { ...process.env, SDL_AUDIODRIVER: 'dummy', CYBERTANK_CAPTURE_FILE: raw, CYBERTANK_CAPTURE_SKU: pack.sku };
+    if (options.includes('--debug')) captureEnv.CYBERTANK_CAPTURE_DEBUG = '1';
     delete captureEnv.WAYLAND_DISPLAY;
     const capture = spawnSync(path.join(temporary, 'bin', 'LivingAquarium-full'), [], {
       env: captureEnv,

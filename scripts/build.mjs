@@ -11,10 +11,12 @@ for (const pack of packs) {
   skus.add(pack.sku);
 }
 for (const sku of skus) {
-  const file = path.join(root, 'videos', `${sku}.mp4`);
-  let size = 0;
-  try { size = (await stat(file)).size; } catch (error) { if (error.code !== 'ENOENT') throw error; }
-  if (size < 1000) throw new Error(`Missing or incomplete preview video: ${sku}`);
+  for (const [directory, extension, minimum] of [['videos', 'mp4', 1000], ['posters', 'jpg', 500]]) {
+    const file = path.join(root, directory, `${sku}.${extension}`);
+    let size = 0;
+    try { size = (await stat(file)).size; } catch (error) { if (error.code !== 'ENOENT') throw error; }
+    if (size < minimum) throw new Error(`Missing or incomplete ${directory} media: ${sku}`);
+  }
 }
 
 await rm(out, { recursive: true, force: true });
@@ -39,8 +41,7 @@ for (const pack of packs) {
 </head>
 <body data-page="detail" data-root="../../" data-sku="${pack.sku}">
   <header class="site-header">
-    <a class="wordmark" href="../../" aria-label="CyberPets home"><span class="wordmark-orbit" aria-hidden="true"></span>CYBER<span>PETS</span></a>
-    <span class="header-note">THE LIVING AQUARIUM COLLECTION</span>
+    <a class="wordmark" href="../../" aria-label="CyberPets home"><svg class="wordmark-icon" viewBox="0 0 100 100" aria-hidden="true"><path class="wordmark-spikes" d="M50 5 55 16 65 8 66 21 78 16 76 29 90 28 84 40 97 45 86 52 95 62 82 64 86 78 73 75 69 89 58 81 50 96 43 82 31 90 29 76 15 79 19 65 5 61 14 51 3 44 16 39 10 26 24 28 23 15 35 20 40 7 48 17Z"/><circle class="wordmark-core" cx="50" cy="50" r="31"/><path class="wordmark-eye" d="M27 51Q50 31 73 51Q50 70 27 51Z"/><circle class="wordmark-iris" cx="50" cy="51" r="10"/><circle class="wordmark-pupil" cx="50" cy="51" r="4"/></svg>CYBER<span>PETS</span></a>
   </header>
   <main class="detail-layout">
     <a class="back-link" href="../../">← All editions</a>
@@ -49,6 +50,7 @@ for (const pack of packs) {
         <div class="detail-heading"><p class="eyebrow">Edition preview</p><h1 id="pack-name"></h1></div>
         <div class="video-shell"><div id="pack-media"></div></div>
         <div class="detail-caption"><span>Footage from the desktop edition</span><span>Looping preview · No download</span></div>
+        <div class="included"><h2>Included in this edition</h2><div class="included-grid" id="pack-contents"></div></div>
       </section>
       <aside class="detail-side"><div id="pack-art"></div><p class="detail-description" id="pack-description"></p><p class="detail-note" id="pack-note"></p><a class="detail-action" href="../../">Explore another edition</a></aside>
     </div>
@@ -64,11 +66,12 @@ for (const pack of packs) {
   await writeFile(path.join(sourceDirectory, 'index.html'), html);
 }
 
-const videoSource = path.join(root, 'videos');
-await mkdir(path.join(out, 'videos'), { recursive: true });
-for (const sku of skus)
-  await copyFile(path.join(videoSource, `${sku}.mp4`), path.join(out, 'videos', `${sku}.mp4`));
-console.log(`Built ${packs.length} pack routes and videos in ${out}`);
+for (const [directory, extension] of [['videos', 'mp4'], ['posters', 'jpg']]) {
+  await mkdir(path.join(out, directory), { recursive: true });
+  for (const sku of skus)
+    await copyFile(path.join(root, directory, `${sku}.${extension}`), path.join(out, directory, `${sku}.${extension}`));
+}
+console.log(`Built ${packs.length} pack routes, videos, and native posters in ${out}`);
 
 function escapeHtml(value) {
   return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);

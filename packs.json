@@ -19,6 +19,69 @@
     ]
   },
   {
+    "sku": "blue-classic-tank",
+    "name": "Blue Water Tank — Classic",
+    "category": "tank",
+    "description": "A fixed classic blue water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.blue.classic"
+    ]
+  },
+  {
+    "sku": "blue-dark-tank",
+    "name": "Blue Water Tank — Dark",
+    "category": "tank",
+    "description": "A fixed dark blue water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.blue.dark"
+    ]
+  },
+  {
+    "sku": "blue-light-tank",
+    "name": "Blue Water Tank — Light",
+    "category": "tank",
+    "description": "A fixed light blue water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.blue.light"
+    ]
+  },
+  {
+    "sku": "custom-color-tank",
+    "name": "Customizable Color Tank",
+    "category": "tank",
+    "description": "A water tank with independently adjustable colors for the floor, rear wall, side walls, and roof; pets are separate.",
+    "assets": [
+      "tank.custom"
+    ]
+  },
+  {
+    "sku": "cyan-classic-tank",
+    "name": "Cyan Water Tank — Classic",
+    "category": "tank",
+    "description": "A fixed classic cyan water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.cyan.classic"
+    ]
+  },
+  {
+    "sku": "cyan-dark-tank",
+    "name": "Cyan Water Tank — Dark",
+    "category": "tank",
+    "description": "A fixed dark cyan water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.cyan.dark"
+    ]
+  },
+  {
+    "sku": "cyan-light-tank",
+    "name": "Cyan Water Tank — Light",
+    "category": "tank",
+    "description": "A fixed light cyan water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.cyan.light"
+    ]
+  },
+  {
     "sku": "full",
     "name": "Full",
     "category": "bundle",
@@ -62,7 +125,59 @@
       "pet.spikeball.twins.transparent.amber",
       "pet.spikeball.twins.transparent.violet",
       "pet.spikeball.twins.hue",
-      "pet.spikeball.twins.metal_hue"
+      "pet.spikeball.twins.metal_hue",
+      "tank.custom",
+      "tank.red.light",
+      "tank.red.classic",
+      "tank.red.dark",
+      "tank.orange.light",
+      "tank.orange.classic",
+      "tank.orange.dark",
+      "tank.yellow.light",
+      "tank.yellow.classic",
+      "tank.yellow.dark",
+      "tank.green.light",
+      "tank.green.classic",
+      "tank.green.dark",
+      "tank.cyan.light",
+      "tank.cyan.classic",
+      "tank.cyan.dark",
+      "tank.blue.light",
+      "tank.blue.classic",
+      "tank.blue.dark",
+      "tank.violet.light",
+      "tank.violet.classic",
+      "tank.violet.dark",
+      "tank.pink.light",
+      "tank.pink.classic",
+      "tank.pink.dark"
+    ]
+  },
+  {
+    "sku": "green-classic-tank",
+    "name": "Green Water Tank — Classic",
+    "category": "tank",
+    "description": "A fixed classic green water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.green.classic"
+    ]
+  },
+  {
+    "sku": "green-dark-tank",
+    "name": "Green Water Tank — Dark",
+    "category": "tank",
+    "description": "A fixed dark green water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.green.dark"
+    ]
+  },
+  {
+    "sku": "green-light-tank",
+    "name": "Green Water Tank — Light",
+    "category": "tank",
+    "description": "A fixed light green water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.green.light"
     ]
   },
   {
@@ -110,12 +225,93 @@
     ]
   },
   {
+    "sku": "orange-classic-tank",
+    "name": "Orange Water Tank — Classic",
+    "category": "tank",
+    "description": "A fixed classic orange water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.orange.classic"
+    ]
+  },
+  {
+    "sku": "orange-dark-tank",
+    "name": "Orange Water Tank — Dark",
+    "category": "tank",
+    "description": "A fixed dark orange water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.orange.dark"
+    ]
+  },
+  {
+    "sku": "orange-light-tank",
+    "name": "Orange Water Tank — Light",
+    "category": "tank",
+    "description": "A fixed light orange water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.orange.light"
+    ]
+  },
+  {
+    "sku": "pink-classic-tank",
+    "name": "Pink Water Tank — Classic",
+    "category": "tank",
+    "description": "A fixed classic pink water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.pink.classic"
+    ]
+  },
+  {
+    "sku": "pink-dark-tank",
+    "name": "Pink Water Tank — Dark",
+    "category": "tank",
+    "description": "A fixed dark pink water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.pink.dark"
+    ]
+  },
+  {
+    "sku": "pink-light-tank",
+    "name": "Pink Water Tank — Light",
+    "category": "tank",
+    "description": "A fixed light pink water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.pink.light"
+    ]
+  },
+  {
     "sku": "plain-tank",
     "name": "Plain Water Tank",
     "category": "tank",
-    "description": "The configurable plain water tank; pets are separate.",
+    "description": "The original plain water tank with its fixed deep-blue palette; pets are separate.",
     "assets": [
       "tank.plain"
+    ]
+  },
+  {
+    "sku": "red-classic-tank",
+    "name": "Red Water Tank — Classic",
+    "category": "tank",
+    "description": "A fixed classic red water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.red.classic"
+    ]
+  },
+  {
+    "sku": "red-dark-tank",
+    "name": "Red Water Tank — Dark",
+    "category": "tank",
+    "description": "A fixed dark red water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.red.dark"
+    ]
+  },
+  {
+    "sku": "red-light-tank",
+    "name": "Red Water Tank — Light",
+    "category": "tank",
+    "description": "A fixed light red water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.red.light"
     ]
   },
   {
@@ -455,6 +651,60 @@
     "assets": [
       "pet.spikeball.twins.transparent.violet",
       "effect.fire"
+    ]
+  },
+  {
+    "sku": "violet-classic-tank",
+    "name": "Violet Water Tank — Classic",
+    "category": "tank",
+    "description": "A fixed classic violet water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.violet.classic"
+    ]
+  },
+  {
+    "sku": "violet-dark-tank",
+    "name": "Violet Water Tank — Dark",
+    "category": "tank",
+    "description": "A fixed dark violet water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.violet.dark"
+    ]
+  },
+  {
+    "sku": "violet-light-tank",
+    "name": "Violet Water Tank — Light",
+    "category": "tank",
+    "description": "A fixed light violet water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.violet.light"
+    ]
+  },
+  {
+    "sku": "yellow-classic-tank",
+    "name": "Yellow Water Tank — Classic",
+    "category": "tank",
+    "description": "A fixed classic yellow water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.yellow.classic"
+    ]
+  },
+  {
+    "sku": "yellow-dark-tank",
+    "name": "Yellow Water Tank — Dark",
+    "category": "tank",
+    "description": "A fixed dark yellow water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.yellow.dark"
+    ]
+  },
+  {
+    "sku": "yellow-light-tank",
+    "name": "Yellow Water Tank — Light",
+    "category": "tank",
+    "description": "A fixed light yellow water tank with coordinated floor, walls, and roof; pets are separate.",
+    "assets": [
+      "tank.yellow.light"
     ]
   }
 ]
