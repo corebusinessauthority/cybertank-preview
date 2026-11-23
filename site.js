@@ -212,6 +212,8 @@ function card(pack, addToCart) {
   label.className = 'pack-card__name';
   label.textContent = pack.name;
   body.append(label);
+  const actions = document.createElement('div');
+  actions.className = 'card-actions';
   const add = document.createElement('button');
   add.className = 'card-add';
   add.type = 'button';
@@ -222,7 +224,17 @@ function card(pack, addToCart) {
     event.stopPropagation();
     addToCart(pack);
   });
-  body.append(add);
+  const buy = document.createElement('button');
+  buy.className = 'card-buy';
+  buy.type = 'button';
+  buy.textContent = 'Buy';
+  buy.setAttribute('aria-label', `Buy ${pack.name}`);
+  buy.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+  actions.append(add, buy);
+  body.append(actions);
   link.append(body);
   return link;
 }
