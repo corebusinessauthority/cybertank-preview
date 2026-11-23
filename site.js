@@ -144,6 +144,18 @@ async function getPacks() {
 function renderCatalog(packs) {
   const grid = document.getElementById('card-grid');
   const buttons = [...document.querySelectorAll('.filter')];
+  const search = document.getElementById('catalog-search');
+  const count = document.getElementById('result-count');
+  const empty = document.getElementById('search-empty');
+  const searchIndex = packs.map(pack => ({
+    pack,
+    text: `${pack.name} ${pack.description} ${pack.sku} ${pack.assets.join(' ')}`
+      .toLocaleLowerCase().replace(/[._-]/g, ' '),
+  }));
+  const initial = new URLSearchParams(location.search);
+  let activeFilter = ['all', 'bundle', 'tank', 'pet'].includes(initial.get('category'))
+    ? initial.get('category') : 'all';
+  search.value = initial.get('q') || '';
   const more = document.createElement('button');
   more.type = 'button';
   more.className = 'load-more';
@@ -157,23 +169,37 @@ function renderCatalog(packs) {
     rendered += next.length;
     more.hidden = rendered >= shown.length;
   }
-  function apply(filter) {
-    shown = packs.filter(pack => filter === 'all' ||
-      (filter === 'pet' ? kind(pack) === 'snake' || kind(pack) === 'ball' || kind(pack) === 'smile' :
-        filter === 'tank' ? kind(pack) === 'tank' : pack.category === filter));
+  function apply() {
+    const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
+    shown = searchIndex.filter(({ pack, text }) =>
+      (activeFilter === 'all' ||
+        (activeFilter === 'pet' ? ['snake', 'ball', 'smile'].includes(kind(pack)) :
+          activeFilter === 'tank' ? kind(pack) === 'tank' : pack.category === activeFilter)) &&
+      terms.every(term => text.includes(term))).map(({ pack }) => pack);
     rendered = 0;
     grid.replaceChildren();
     addPage();
+    count.textContent = `${shown.length.toLocaleString()} ${shown.length === 1 ? 'edition' : 'editions'}`;
+    empty.hidden = shown.length !== 0;
     for (const button of buttons) {
-      const selected = button.dataset.filter === filter;
+      const selected = button.dataset.filter === activeFilter;
       button.classList.toggle('is-active', selected);
       button.setAttribute('aria-pressed', String(selected));
     }
+    const url = new URL(location.href);
+    if (activeFilter === 'all') url.searchParams.delete('category');
+    else url.searchParams.set('category', activeFilter);
+    if (search.value.trim()) url.searchParams.set('q', search.value.trim());
+    else url.searchParams.delete('q');
+    history.replaceState(null, '', url);
   }
   more.addEventListener('click', addPage);
-  buttons.forEach(button => button.addEventListener('click', () => apply(button.dataset.filter)));
-  apply(['all', 'bundle', 'tank', 'pet'].includes(new URLSearchParams(location.search).get('category'))
-    ? new URLSearchParams(location.search).get('category') : 'all');
+  buttons.forEach(button => button.addEventListener('click', () => {
+    activeFilter = button.dataset.filter;
+    apply();
+  }));
+  search.addEventListener('input', apply);
+  apply();
 }
 
 async function renderDetail(packs) {

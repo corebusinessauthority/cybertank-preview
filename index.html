@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#080a10">
   <meta name="description" content="Explore every CyberPets tank, creature, and bundle in motion. A visual preview catalog for the Living Aquarium collection.">
   <title>CyberPets · Preview collection</title>
-  <link rel="stylesheet" href="./style.css?v=71">
-  <script type="module" src="./site.js?v=74"></script>
+  <link rel="stylesheet" href="./style.css?v=72">
+  <script type="module" src="./site.js?v=75"></script>
 </head>
 <body data-page="catalog" data-root="./">
   <header class="site-header">
@@ -24,7 +24,13 @@
   </header>
   <main>
     <section class="collection" aria-label="CyberPets preview collection">
+      <div class="catalog-tools">
+        <label class="sr-only" for="catalog-search">Search editions by color or keyword</label>
+        <input id="catalog-search" type="search" placeholder="Search colors, creatures, tanks, bundles…" autocomplete="off" spellcheck="false">
+        <span class="result-count" id="result-count" aria-live="polite"></span>
+      </div>
       <div class="card-grid" id="card-grid"></div>
+      <p class="search-empty" id="search-empty" hidden>No editions match that search.</p>
     </section>
   </main>
   <footer class="site-footer"><span>CYBERPETS</span><span>Visual previews · No downloads on this site</span></footer>
