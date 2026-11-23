@@ -5,9 +5,9 @@ body { margin: 0; min-width: 320px; background: radial-gradient(ellipse 95% 42% 
 a { color: inherit; }
 button { font: inherit; }
 button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
-.site-header { position: sticky; top: 0; z-index: 50; min-height: 94px; padding: 0 clamp(22px, 4vw, 72px); border-bottom: 1px solid #252525; background: #0b0b0bef; backdrop-filter: blur(18px); }
-.site-header__main { height: 94px; display: flex; align-items: center; justify-content: center; position: relative; }
-.header-categories { position: static; display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; padding: 15px 22px 18px; background: #0b0b0bf7; border-bottom: 1px solid #383838; box-shadow: 0 14px 25px #0008; opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); overflow: hidden; transition: opacity .18s, transform .18s, max-height .18s, padding .18s, border-color .18s; }
+.site-header { position: sticky; top: 0; z-index: 50; min-height: 94px; padding: 0; border-bottom: 1px solid #252525; background: #0b0b0bef; backdrop-filter: blur(18px); }
+.site-header__main { height: 94px; display: flex; align-items: center; justify-content: center; position: relative; padding-inline: clamp(22px, 4vw, 72px); }
+.header-categories { position: static; display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; padding: 15px clamp(22px, 4vw, 72px) 18px; background: #0b0b0bf7; border-bottom: 1px solid #383838; box-shadow: 0 14px 25px #0008; opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); overflow: hidden; transition: opacity .18s, transform .18s, max-height .18s, padding .18s, border-color .18s; }
 .site-header.is-condensed .header-categories { max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-8px); border-bottom-color: transparent; }
 .back-to-top { position: fixed; right: clamp(18px, 3vw, 42px); bottom: clamp(18px, 3vw, 34px); z-index: 100; width: 42px; height: 42px; display: inline-grid; place-items: center; padding: 0; color: #eeeeee; background: #1b1b1bf2; border: 1px solid #626262; border-radius: 50%; box-shadow: 0 7px 22px #000a; cursor: pointer; font-size: 21px; line-height: 1; }
 .back-to-top:hover { color: white; border-color: #bdbdbd; background: #303030; }
