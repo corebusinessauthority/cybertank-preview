@@ -1,0 +1,460 @@
+[
+  {
+    "sku": "basic-full",
+    "name": "Basic Full",
+    "category": "bundle",
+    "description": "Plain water tank with every smiley color.",
+    "assets": [
+      "tank.plain",
+      "pet.smiley.purple",
+      "pet.smiley.red",
+      "pet.smiley.orange",
+      "pet.smiley.yellow",
+      "pet.smiley.green",
+      "pet.smiley.cyan",
+      "pet.smiley.blue",
+      "pet.smiley.violet",
+      "pet.smiley.pink",
+      "pet.smiley.hue"
+    ]
+  },
+  {
+    "sku": "full",
+    "name": "Full",
+    "category": "bundle",
+    "description": "All current tanks, pets, and effects.",
+    "assets": [
+      "tank.matrix",
+      "tank.plain",
+      "pet.snake",
+      "pet.snake.transparent_black",
+      "pet.snake.solid.blue",
+      "pet.snake.solid.rose",
+      "pet.snake.solid.lime",
+      "pet.snake.solid.amber",
+      "pet.snake.solid.violet",
+      "pet.snake.transparent.blue",
+      "pet.snake.transparent.rose",
+      "pet.snake.transparent.lime",
+      "pet.snake.transparent.amber",
+      "pet.snake.transparent.violet",
+      "pet.spikeball",
+      "pet.spikeball.twin",
+      "effect.fire",
+      "pet.smiley.purple",
+      "pet.smiley.red",
+      "pet.smiley.orange",
+      "pet.smiley.yellow",
+      "pet.smiley.green",
+      "pet.smiley.cyan",
+      "pet.smiley.blue",
+      "pet.smiley.violet",
+      "pet.smiley.pink",
+      "pet.smiley.hue",
+      "pet.spikeball.twins.solid.blue",
+      "pet.spikeball.twins.solid.rose",
+      "pet.spikeball.twins.solid.lime",
+      "pet.spikeball.twins.solid.amber",
+      "pet.spikeball.twins.solid.violet",
+      "pet.spikeball.twins.transparent.blue",
+      "pet.spikeball.twins.transparent.rose",
+      "pet.spikeball.twins.transparent.lime",
+      "pet.spikeball.twins.transparent.amber",
+      "pet.spikeball.twins.transparent.violet",
+      "pet.spikeball.twins.hue",
+      "pet.spikeball.twins.metal_hue"
+    ]
+  },
+  {
+    "sku": "matrix-full",
+    "name": "Matrix Full",
+    "category": "bundle",
+    "description": "Matrix tank with metal snake, original spikeball twins, and fire laser.",
+    "assets": [
+      "tank.matrix",
+      "pet.snake",
+      "pet.spikeball",
+      "pet.spikeball.twin",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "matrix-leech",
+    "name": "Matrix Leech",
+    "category": "bundle",
+    "description": "Matrix tank with the metal snake.",
+    "assets": [
+      "tank.matrix",
+      "pet.snake"
+    ]
+  },
+  {
+    "sku": "matrix-tank",
+    "name": "Matrix Tank",
+    "category": "tank",
+    "description": "The Matrix tank; pets are separate.",
+    "assets": [
+      "tank.matrix"
+    ]
+  },
+  {
+    "sku": "matrix-twins",
+    "name": "Matrix Twins",
+    "category": "bundle",
+    "description": "Matrix tank with original spikeball twins and fire laser.",
+    "assets": [
+      "tank.matrix",
+      "pet.spikeball",
+      "pet.spikeball.twin",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "plain-tank",
+    "name": "Plain Water Tank",
+    "category": "tank",
+    "description": "The configurable plain water tank; pets are separate.",
+    "assets": [
+      "tank.plain"
+    ]
+  },
+  {
+    "sku": "smiley-blue",
+    "name": "Smiley Blue",
+    "category": "addon",
+    "description": "The blue smiley, addable to any owned tank.",
+    "assets": [
+      "pet.smiley.blue"
+    ]
+  },
+  {
+    "sku": "smiley-cyan",
+    "name": "Smiley Cyan",
+    "category": "addon",
+    "description": "The cyan smiley, addable to any owned tank.",
+    "assets": [
+      "pet.smiley.cyan"
+    ]
+  },
+  {
+    "sku": "smiley-green",
+    "name": "Smiley Green",
+    "category": "addon",
+    "description": "The green smiley, addable to any owned tank.",
+    "assets": [
+      "pet.smiley.green"
+    ]
+  },
+  {
+    "sku": "smiley-hue",
+    "name": "Smiley Hue",
+    "category": "addon",
+    "description": "The hue smiley, addable to any owned tank.",
+    "assets": [
+      "pet.smiley.hue"
+    ]
+  },
+  {
+    "sku": "smiley-orange",
+    "name": "Smiley Orange",
+    "category": "addon",
+    "description": "The orange smiley, addable to any owned tank.",
+    "assets": [
+      "pet.smiley.orange"
+    ]
+  },
+  {
+    "sku": "smiley-pink",
+    "name": "Smiley Pink",
+    "category": "addon",
+    "description": "The pink smiley, addable to any owned tank.",
+    "assets": [
+      "pet.smiley.pink"
+    ]
+  },
+  {
+    "sku": "smiley-purple",
+    "name": "Smiley Purple",
+    "category": "addon",
+    "description": "The purple smiley, addable to any owned tank.",
+    "assets": [
+      "pet.smiley.purple"
+    ]
+  },
+  {
+    "sku": "smiley-red",
+    "name": "Smiley Red",
+    "category": "addon",
+    "description": "The red smiley, addable to any owned tank.",
+    "assets": [
+      "pet.smiley.red"
+    ]
+  },
+  {
+    "sku": "smiley-violet",
+    "name": "Smiley Violet",
+    "category": "addon",
+    "description": "The violet smiley, addable to any owned tank.",
+    "assets": [
+      "pet.smiley.violet"
+    ]
+  },
+  {
+    "sku": "smiley-yellow",
+    "name": "Smiley Yellow",
+    "category": "addon",
+    "description": "The yellow smiley, addable to any owned tank.",
+    "assets": [
+      "pet.smiley.yellow"
+    ]
+  },
+  {
+    "sku": "snake",
+    "name": "Snake",
+    "category": "addon",
+    "description": "Adds snake to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake"
+    ]
+  },
+  {
+    "sku": "snake-solid-amber",
+    "name": "Snake Solid Amber",
+    "category": "addon",
+    "description": "Adds snake solid amber to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.solid.amber"
+    ]
+  },
+  {
+    "sku": "snake-solid-blue",
+    "name": "Snake Solid Blue",
+    "category": "addon",
+    "description": "Adds snake solid blue to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.solid.blue"
+    ]
+  },
+  {
+    "sku": "snake-solid-lime",
+    "name": "Snake Solid Lime",
+    "category": "addon",
+    "description": "Adds snake solid lime to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.solid.lime"
+    ]
+  },
+  {
+    "sku": "snake-solid-rose",
+    "name": "Snake Solid Rose",
+    "category": "addon",
+    "description": "Adds snake solid rose to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.solid.rose"
+    ]
+  },
+  {
+    "sku": "snake-solid-violet",
+    "name": "Snake Solid Violet",
+    "category": "addon",
+    "description": "Adds snake solid violet to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.solid.violet"
+    ]
+  },
+  {
+    "sku": "snake-transparent-amber",
+    "name": "Snake Transparent Amber",
+    "category": "addon",
+    "description": "Adds snake transparent amber to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.transparent.amber"
+    ]
+  },
+  {
+    "sku": "snake-transparent-black",
+    "name": "Snake Transparent Black",
+    "category": "addon",
+    "description": "Adds snake transparent black to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.transparent_black"
+    ]
+  },
+  {
+    "sku": "snake-transparent-blue",
+    "name": "Snake Transparent Blue",
+    "category": "addon",
+    "description": "Adds snake transparent blue to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.transparent.blue"
+    ]
+  },
+  {
+    "sku": "snake-transparent-lime",
+    "name": "Snake Transparent Lime",
+    "category": "addon",
+    "description": "Adds snake transparent lime to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.transparent.lime"
+    ]
+  },
+  {
+    "sku": "snake-transparent-rose",
+    "name": "Snake Transparent Rose",
+    "category": "addon",
+    "description": "Adds snake transparent rose to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.transparent.rose"
+    ]
+  },
+  {
+    "sku": "snake-transparent-violet",
+    "name": "Snake Transparent Violet",
+    "category": "addon",
+    "description": "Adds snake transparent violet to any owned tank; no tank included.",
+    "assets": [
+      "pet.snake.transparent.violet"
+    ]
+  },
+  {
+    "sku": "spikeball",
+    "name": "Spikeball",
+    "category": "addon",
+    "description": "Adds spikeball to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins",
+    "name": "Spikeball Twins",
+    "category": "addon",
+    "description": "Adds spikeball twins to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball",
+      "pet.spikeball.twin",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-hue",
+    "name": "Spikeball Twins Hue",
+    "category": "addon",
+    "description": "Adds spikeball twins hue to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.hue",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-metal-hue",
+    "name": "Spikeball Twins Metal Hue",
+    "category": "addon",
+    "description": "A mixed metallic and hue spikeball pair with fire laser; tank sold separately.",
+    "assets": [
+      "pet.spikeball.twins.metal_hue",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-solid-amber",
+    "name": "Spikeball Twins Solid Amber",
+    "category": "addon",
+    "description": "Adds spikeball twins solid amber to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.solid.amber",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-solid-blue",
+    "name": "Spikeball Twins Solid Blue",
+    "category": "addon",
+    "description": "Adds spikeball twins solid blue to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.solid.blue",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-solid-lime",
+    "name": "Spikeball Twins Solid Lime",
+    "category": "addon",
+    "description": "Adds spikeball twins solid lime to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.solid.lime",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-solid-rose",
+    "name": "Spikeball Twins Solid Rose",
+    "category": "addon",
+    "description": "Adds spikeball twins solid rose to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.solid.rose",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-solid-violet",
+    "name": "Spikeball Twins Solid Violet",
+    "category": "addon",
+    "description": "Adds spikeball twins solid violet to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.solid.violet",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-transparent-amber",
+    "name": "Spikeball Twins Transparent Amber",
+    "category": "addon",
+    "description": "Adds spikeball twins transparent amber to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.transparent.amber",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-transparent-blue",
+    "name": "Spikeball Twins Transparent Blue",
+    "category": "addon",
+    "description": "Adds spikeball twins transparent blue to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.transparent.blue",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-transparent-lime",
+    "name": "Spikeball Twins Transparent Lime",
+    "category": "addon",
+    "description": "Adds spikeball twins transparent lime to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.transparent.lime",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-transparent-rose",
+    "name": "Spikeball Twins Transparent Rose",
+    "category": "addon",
+    "description": "Adds spikeball twins transparent rose to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.transparent.rose",
+      "effect.fire"
+    ]
+  },
+  {
+    "sku": "spikeball-twins-transparent-violet",
+    "name": "Spikeball Twins Transparent Violet",
+    "category": "addon",
+    "description": "Adds spikeball twins transparent violet to any owned tank; no tank included.",
+    "assets": [
+      "pet.spikeball.twins.transparent.violet",
+      "effect.fire"
+    ]
+  }
+]

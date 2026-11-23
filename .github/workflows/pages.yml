@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify self-contained preview
         run: npm run check
-      - name: Build site and itch.io upload
+      - name: Build preview catalog
         run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

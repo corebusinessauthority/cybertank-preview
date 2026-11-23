@@ -1,10 +1,10 @@
-# CyberPets Cybertank preview
+# CyberPets preview collection
 
-An independent, browser-only preview of CyberPets' Living Aquarium. It contains a fixed Matrix tank, one metallic snake, metallic spikeball twins without lasers, and a hue-changing smiley. It does not contain the desktop game's settings, paid packs, or source code.
+Independent, public gallery for CyberPets. The home page displays 43 collectible-style edition cards, with names but no prices. Opening a card shows a looping recording of that edition in the native C++ aquarium renderer. The recordings are visual previews, not the software or a download entitlement.
 
-The site is self-contained: `index.html` at the repository root launches the tank directly. Three.js 0.180.0 and its MIT license live in `vendor/`; `metal.jpg` textures the spikeballs and `snake-metal.jpg` textures the snake. No checkout of `aquapets`, npm install, or external CDN is required.
+The site contains no storefront, executable, private source, purchase verification, or itch.io keys. Future OpenSea purchases and itch.io delivery require a separate fulfillment process; a purchase alone is **not** automatically linked to a download by this site. Creature-only videos use a demonstration Matrix tank that is not included with those editions.
 
-## Build locally
+## Local build and review
 
 ```sh
 npm run check
@@ -12,19 +12,12 @@ npm run build
 python3 -m http.server 8765 --directory dist
 ```
 
-Open `http://localhost:8765/` or `http://localhost:8765/itch/`; both show only the tank. The build writes into ignored `dist/`.
+Open `http://localhost:8765/` for the collection, or a route such as `http://localhost:8765/packs/matrix-leech/` for a specific preview. The build fails if any of the 43 edition videos is missing. Files in `dist/` are generated and ignored by Git.
 
 ## GitHub Pages
 
-The repository root is directly publishable from `main` under **Settings → Pages → Build and deployment → Deploy from a branch → main / (root)**. Alternatively, set **Source** to **GitHub Actions**; a push to `main` runs `.github/workflows/pages.yml` and deploys the equivalent `dist/` output. Either way, <https://corebusinessauthority.github.io/cybertank-preview/> opens the tank itself, not this README. The main `aquapets` repository is not involved.
+Use **Settings → Pages → Build and deployment → Source: GitHub Actions** for this repository. `.github/workflows/pages.yml` builds and deploys `dist/` on pushes to `main`. The intended public address is <https://corebusinessauthority.github.io/cybertank-preview/>. A custom domain may be configured later; all site links are relative, so both paths work.
 
-## itch.io HTML5 preview
+## Maintaining the collection
 
-GitHub Pages does not automatically populate itch.io's **Embed game** selector. Make a ZIP of the **contents** of `dist/itch/`, with `index.html` at the ZIP root:
-
-```sh
-cd dist/itch
-zip -r ../../itch-html5-preview.zip index.html app.js style.css metal.jpg snake-metal.jpg vendor
-```
-
-Upload that ZIP to the itch.io project as a browser-playable HTML5 file. If the itch.io project is currently an **NFT** rather than an **HTML Game**, change its project kind before expecting browser embed controls.
+The public `packs.json` was generated from the product's 43 pack manifests with `node scripts/import-packs.mjs /path/to/AquariumNFT`. It contains only display metadata. The corresponding `videos/<sku>.mp4` clips were recorded from an opt-in C++ capture build by `scripts/capture-videos.mjs`; this repo does not depend on the product source at deploy time. Review videos before publishing when a pack's contents change.

@@ -4,6 +4,6 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "check": "node --check app.js && node --check scripts/build.mjs"
+    "check": "node --check site.js && node --check scripts/build.mjs && node --check scripts/import-packs.mjs && node --check scripts/capture-videos.mjs"
   }
 }
