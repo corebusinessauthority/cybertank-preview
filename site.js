@@ -160,7 +160,8 @@ async function renderDetail(packs) {
   video.loop = true;
   video.playsInline = true;
   video.controls = true;
-  video.preload = 'metadata';
+  video.preload = 'auto';
+  video.poster = `${root}posters/${encodeURIComponent(pack.sku)}.jpg`;
   video.setAttribute('aria-label', `${pack.name} gameplay preview`);
   const fallback = document.createElement('div');
   fallback.className = 'video-fallback';

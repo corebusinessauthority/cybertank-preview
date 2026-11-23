@@ -37,7 +37,7 @@ for (const pack of packs) {
   <meta name="description" content="Watch the ${escapeHtml(pack.name)} edition of CyberPets in motion.">
   <title>${escapeHtml(pack.name)} · CyberPets preview</title>
   <link rel="stylesheet" href="../../style.css?v=68">
-  <script type="module" src="../../site.js?v=68"></script>
+  <script type="module" src="../../site.js?v=69"></script>
 </head>
 <body data-page="detail" data-root="../../" data-sku="${pack.sku}">
   <header class="site-header">
