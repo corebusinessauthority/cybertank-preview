@@ -2,7 +2,7 @@ const root = document.body.dataset.root || './';
 const page = document.body.dataset.page;
 const sku = document.body.dataset.sku;
 const CART_KEY = 'cyberpets-preview-cart';
-const CATALOG_VERSION = '87';
+const CATALOG_VERSION = '88';
 
 function readCart() {
   try {
