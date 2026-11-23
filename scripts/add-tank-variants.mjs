@@ -31,7 +31,7 @@ for (const color of colors) {
     sku,
     name: `Cyber Tank — ${color[0].toUpperCase()}${color.slice(1)}`,
     category: 'tank',
-    description: `The Cyber Tank in a ${color} color treatment, with its animated digital-wall atmosphere.`,
+      description: `The Cyber Tank in an ${color} color treatment, with its animated digital-wall atmosphere.`,
     assets: [`tank.cyber.${color}`],
   });
 }
