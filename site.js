@@ -44,7 +44,7 @@ function cardArt(pack) {
   gallery.className = `card-photos${featured.length > 1 ? ` card-photos--mosaic card-photos--${featured.length}` : ''}`;
   for (const asset of featured) {
     const photo = document.createElement('img');
-    photo.src = `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
+    photo.src = `${root}posters/${encodeURIComponent(posterSku(asset, pack))}.jpg`;
     photo.alt = assetName(asset);
     photo.loading = 'lazy';
     gallery.append(photo);
@@ -59,11 +59,22 @@ function cardArt(pack) {
   return stage;
 }
 
-function posterSku(asset) {
+function previewTankColor(pack) {
+  const palette = ['blue', 'cyan', 'green', 'lime', 'orange', 'pink', 'red', 'violet', 'yellow'];
+  const named = pack?.sku.match(/^color-pack-(amber|blue|lime|rose|violet)$/)?.[1];
+  const aliases = { amber: 'orange', rose: 'pink' };
+  if (named) return aliases[named] || named;
+  const key = pack?.sku || '';
+  let hash = 0;
+  for (const character of key) hash = (hash * 31 + character.charCodeAt(0)) >>> 0;
+  return palette[hash % palette.length];
+}
+
+function posterSku(asset, pack) {
   if (asset === 'tank.matrix') return 'matrix-tank';
   if (asset === 'tank.plain') return 'plain-tank';
   if (asset === 'tank.custom') return 'custom-color-tank';
-  if (asset === 'tank.random_color') return 'blue-classic-tank';
+  if (asset === 'tank.random_color') return `${previewTankColor(pack)}-classic-tank`;
   if (asset.startsWith('tank.')) {
     const [, color, shade] = asset.split('.');
     return `${color}-${shade}-tank`;
@@ -231,7 +242,7 @@ async function renderDetail(packs) {
           const photo = document.createElement('img');
           photo.src = asset === 'pet.smiley.hue'
             ? `${root}posters/smiley-hue-${frame}.jpg`
-            : `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
+            : `${root}posters/${encodeURIComponent(posterSku(asset, pack))}.jpg`;
           photo.alt = asset === 'pet.smiley.hue' ? `Hue Smiley color ${frame}` : assetName(asset);
           photo.loading = 'lazy';
           gallery.append(photo);
@@ -265,8 +276,8 @@ async function renderDetail(packs) {
     choices.className = 'component-preview__choices';
     const buttons = [];
     function select(asset) {
-      clip.poster = `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
-      clip.src = `${root}videos/${encodeURIComponent(posterSku(asset))}.mp4`;
+      clip.poster = `${root}posters/${encodeURIComponent(posterSku(asset, pack))}.jpg`;
+      clip.src = `${root}videos/${encodeURIComponent(posterSku(asset, pack))}.mp4`;
       clip.setAttribute('aria-label', `${assetName(asset)} gameplay preview`);
       caption.textContent = assetName(asset);
       for (const [button, candidate] of buttons) button.setAttribute('aria-pressed', String(candidate === asset));
