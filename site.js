@@ -167,18 +167,17 @@ function renderCatalog(packs) {
   let activeFilter = ['all', 'bundle', 'tank', 'pet'].includes(initial.get('category'))
     ? initial.get('category') : 'all';
   search.value = initial.get('q') || '';
-  const more = document.createElement('button');
-  more.type = 'button';
-  more.className = 'load-more';
-  more.textContent = 'Show more editions';
-  grid.after(more);
   let shown = [];
   let rendered = 0;
   function addPage() {
+    if (rendered >= shown.length) return;
     const next = shown.slice(rendered, rendered + 24);
     grid.append(...next.map(card));
     rendered += next.length;
-    more.hidden = rendered >= shown.length;
+  }
+  function maybeLoadMore() {
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 700)
+      addPage();
   }
   function apply() {
     const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
@@ -190,6 +189,7 @@ function renderCatalog(packs) {
     rendered = 0;
     grid.replaceChildren();
     addPage();
+    maybeLoadMore();
     count.textContent = `${shown.length.toLocaleString()} ${shown.length === 1 ? 'edition' : 'editions'}`;
     empty.hidden = shown.length !== 0;
     for (const button of buttons) {
@@ -204,7 +204,8 @@ function renderCatalog(packs) {
     else url.searchParams.delete('q');
     history.replaceState(null, '', url);
   }
-  more.addEventListener('click', addPage);
+  window.addEventListener('scroll', maybeLoadMore, { passive: true });
+  window.addEventListener('resize', maybeLoadMore);
   buttons.forEach(button => button.addEventListener('click', () => {
     activeFilter = button.dataset.filter;
     apply();
