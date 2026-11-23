@@ -57,6 +57,11 @@ for (const pack of packs) {
 </body>
 </html>`;
   await writeFile(path.join(directory, 'index.html'), html);
+  // GitHub Pages can also be configured to serve main/(root). Keep these
+  // generated entry points in the repository so either Pages source works.
+  const sourceDirectory = path.join(root, 'packs', pack.sku);
+  await mkdir(sourceDirectory, { recursive: true });
+  await writeFile(path.join(sourceDirectory, 'index.html'), html);
 }
 
 const videoSource = path.join(root, 'videos');

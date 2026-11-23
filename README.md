@@ -16,7 +16,7 @@ Open `http://localhost:8765/` for the collection, or a route such as `http://loc
 
 ## GitHub Pages
 
-Use **Settings → Pages → Build and deployment → Source: GitHub Actions** for this repository. `.github/workflows/pages.yml` builds and deploys `dist/` on pushes to `main`. The intended public address is <https://corebusinessauthority.github.io/cybertank-preview/>. A custom domain may be configured later; all site links are relative, so both paths work.
+The repository works with either **Settings → Pages → Build and deployment → Source: GitHub Actions** or **Deploy from a branch → main / (root)**. `.github/workflows/pages.yml` builds and deploys `dist/` on pushes to `main`; `npm run build` also refreshes the tracked `packs/<sku>/index.html` routes for branch-based hosting. The public address is <https://corebusinessauthority.github.io/cybertank-preview/>. A custom domain may be configured later; all site links are relative, so both paths work.
 
 ## Maintaining the collection
 
