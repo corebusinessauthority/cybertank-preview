@@ -30,4 +30,18 @@ for (const pack of packs) {
   if ((await stat(output)).size < 500) throw new Error(`Empty poster: ${pack.sku}`);
   created++;
 }
+// Four actual moments in the hue-shifting native clip make its changing
+// palette visible even before the visitor starts the video.
+for (const [index, time] of ['0.3', '1.7', '3.1', '4.5'].entries()) {
+  const output = path.join(root, 'posters', `smiley-hue-${index + 1}.jpg`);
+  const result = spawnSync('ffmpeg', [
+    '-hide_banner', '-loglevel', 'error', '-ss', time,
+    '-i', path.join(root, 'videos', 'smiley-hue.mp4'),
+    '-frames:v', '1', '-vf',
+    'crop=360:225:(iw-360)/2:(ih-225)/2,scale=800:500:flags=lanczos',
+    '-q:v', '3', '-y', output,
+  ], { encoding: 'utf8' });
+  if (result.status !== 0) throw new Error(`Hue Smiley picture ${index + 1}: ${result.stderr}`);
+  if ((await stat(output)).size < 500) throw new Error(`Empty Hue Smiley picture ${index + 1}`);
+}
 console.log(`Created ${created} posters from native preview videos.`);

@@ -27,6 +27,18 @@ function cardArt(pack) {
   stage.className = 'card-stage';
   stage.style.setProperty('--accent', accent(pack));
   const gallery = document.createElement('span');
+  if (pack.sku === 'smiley-hue') {
+    gallery.className = 'card-photos card-photos--hue';
+    for (let frame = 1; frame <= 4; frame++) {
+      const photo = document.createElement('img');
+      photo.src = `${root}posters/smiley-hue-${frame}.jpg`;
+      photo.alt = `Hue Smiley color ${frame}`;
+      photo.loading = 'lazy';
+      gallery.append(photo);
+    }
+    stage.append(gallery);
+    return stage;
+  }
   const pictured = picturedAssets(pack);
   const featured = pictured.length > 4 ? [...pictured.filter(isCreature).slice(0, 3), ...pictured.filter(isTank).slice(0, 1)] : pictured;
   gallery.className = `card-photos${featured.length > 1 ? ` card-photos--mosaic card-photos--${featured.length}` : ''}`;
@@ -91,14 +103,14 @@ function assetName(asset) {
     return `${titleCase(color)} ${style === 'transparent' ? 'Glass ' : ''}Leech`;
   }
   if (asset === 'pet.spikeball') return 'Cyber Spikeball';
-  if (asset === 'pet.spikeball.twin') return 'Cyber + Cyber Twin Set';
+  if (asset === 'pet.spikeball.twin') return 'Cyber Twin Set';
   if (asset.startsWith('pet.spikeball.twins.')) {
     const variant = asset.slice('pet.spikeball.twins.'.length);
     if (variant === 'metal_hue') return 'Cyber + Hue Twin Set';
-    if (variant === 'hue') return 'Hue + Hue Twin Set';
+    if (variant === 'hue') return 'Hue Twin Set';
     const [style, color] = variant.split('.');
     const label = `${titleCase(color)}${style === 'transparent' ? ' Glass' : ''}`;
-    return `${label} + ${label} Twin Set`;
+    return `${label} Twin Set`;
   }
   if (asset.startsWith('pet.smiley.')) return `${titleCase(asset.slice('pet.smiley.'.length))} Smiley`;
   return titleCase(asset.replace(/^(tank|pet)\./, '').replaceAll(/[._]/g, ' '));
@@ -160,7 +172,8 @@ function renderCatalog(packs) {
   }
   more.addEventListener('click', addPage);
   buttons.forEach(button => button.addEventListener('click', () => apply(button.dataset.filter)));
-  apply('all');
+  apply(['all', 'bundle', 'tank', 'pet'].includes(new URLSearchParams(location.search).get('category'))
+    ? new URLSearchParams(location.search).get('category') : 'all');
 }
 
 async function renderDetail(packs) {
@@ -186,13 +199,20 @@ async function renderDetail(packs) {
       for (const asset of assets) {
         const entry = document.createElement('figure');
         entry.className = 'included-item';
-        const photo = document.createElement('img');
-        photo.src = `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
-        photo.alt = assetName(asset);
-        photo.loading = 'lazy';
+        const gallery = document.createElement('div');
+        if (asset === 'pet.smiley.hue') gallery.className = 'included-item__hues';
+        for (let frame = 1; frame <= (asset === 'pet.smiley.hue' ? 4 : 1); frame++) {
+          const photo = document.createElement('img');
+          photo.src = asset === 'pet.smiley.hue'
+            ? `${root}posters/smiley-hue-${frame}.jpg`
+            : `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
+          photo.alt = asset === 'pet.smiley.hue' ? `Hue Smiley color ${frame}` : assetName(asset);
+          photo.loading = 'lazy';
+          gallery.append(photo);
+        }
         const name = document.createElement('figcaption');
         name.textContent = assetName(asset);
-        entry.append(photo, name);
+        entry.append(gallery, name);
         grid.append(entry);
       }
       section.append(heading, grid);
@@ -237,10 +257,7 @@ async function renderDetail(packs) {
     }
     preview.append(figure, choices);
     if (characters.length) select(characters[0]);
-    const note = document.createElement('p');
-    note.className = 'component-preview__note';
-    note.textContent = 'Select a creature to watch its native gameplay loop. The complete pack contents are pictured below.';
-    media.append(preview, note);
+    media.append(preview);
     return;
   }
   const video = document.createElement('video');
@@ -259,6 +276,32 @@ async function renderDetail(packs) {
   video.src = `${root}videos/${encodeURIComponent(pack.sku)}.mp4`;
   media.append(video);
   video.play().catch(() => {});
+}
+
+const header = document.querySelector('.site-header');
+const categoryTrigger = header?.querySelector('.category-trigger');
+if (header && categoryTrigger) {
+  const setOpen = open => {
+    header.classList.toggle('is-open', open);
+    categoryTrigger.setAttribute('aria-expanded', String(open));
+  };
+  header.addEventListener('pointerenter', () => {
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) setOpen(true);
+  });
+  header.addEventListener('pointerleave', () => {
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) setOpen(false);
+  });
+  header.addEventListener('focusin', () => setOpen(true));
+  header.addEventListener('focusout', event => {
+    if (!header.contains(event.relatedTarget)) setOpen(false);
+  });
+  categoryTrigger.addEventListener('click', () => setOpen(true));
+  document.addEventListener('pointerdown', event => {
+    if (!header.contains(event.target)) setOpen(false);
+  });
+  header.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { categoryTrigger.focus(); setOpen(false); }
+  });
 }
 
 getPacks().then(packs => page === 'catalog' ? renderCatalog(packs) : renderDetail(packs))
