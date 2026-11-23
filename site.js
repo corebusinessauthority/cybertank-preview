@@ -60,9 +60,9 @@ function cardArt(pack) {
 }
 
 function previewTankColor(pack) {
-  const palette = ['blue', 'cyan', 'green', 'lime', 'orange', 'pink', 'red', 'violet', 'yellow'];
+  const palette = ['blue', 'cyan', 'green', 'orange', 'pink', 'red', 'violet', 'yellow'];
   const named = pack?.sku.match(/^color-pack-(amber|blue|lime|rose|violet)$/)?.[1];
-  const aliases = { amber: 'orange', rose: 'pink' };
+  const aliases = { amber: 'orange', lime: 'green', rose: 'pink' };
   if (named) return aliases[named] || named;
   const key = pack?.sku || '';
   let hash = 0;
