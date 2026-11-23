@@ -87,6 +87,42 @@ for (const [directory, extension] of [['videos', 'mp4'], ['posters', 'jpg']]) {
     if (file.endsWith(`.${extension}`))
       await copyFile(path.join(root, directory, file), path.join(out, directory, file));
 }
+
+// A small, self-contained HTML5 preview for itch.io. This deliberately uses
+// only the fixed Matrix scene and the three showcase pets; the full catalog
+// remains available on GitHub Pages and no desktop/download assets are put in
+// this browser build.
+const itch = path.join(out, 'itch');
+await mkdir(path.join(itch, 'vendor'), { recursive: true });
+for (const file of ['app.js', 'metal.jpg', 'snake-metal.jpg'])
+  await copyFile(path.join(root, file), path.join(itch, file));
+await copyFile(path.join(root, 'vendor', 'three.module.js'), path.join(itch, 'vendor', 'three.module.js'));
+await writeFile(path.join(itch, 'index.html'), `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CyberPets · Matrix preview</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #010503; }
+    body { overflow: hidden; font: 14px system-ui, sans-serif; }
+    #scene { width: 100vw; height: 100vh; }
+    #scene canvas { display: block; width: 100%; height: 100%; }
+    .label { position: fixed; left: 18px; top: 16px; color: #dfffe9; letter-spacing: .08em; text-transform: uppercase; text-shadow: 0 0 12px #35ff83; pointer-events: none; }
+    #scene-error { position: fixed; inset: 0; display: grid; place-items: center; color: #ffb8b8; background: #050505; }
+    #scene-error[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <div id="scene" aria-label="CyberPets Matrix tank preview"></div>
+  <div class="label">CyberPets · Matrix preview</div>
+  <div id="scene-error" hidden>WebGL is unavailable in this browser.</div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
+`);
 console.log(`Built ${packs.length} pack routes with native component media in ${out}`);
 
 function escapeHtml(value) {
