@@ -44,7 +44,7 @@ function setupCart(packs) {
     for (const item of items) {
       const row = document.createElement('div');
       row.className = 'cart-item';
-      row.innerHTML = `<span>${item.name}<small>Qty ${item.quantity}</small></span><strong>${price(item.price * item.quantity)}</strong><button type="button" aria-label="Remove ${item.name}" data-remove="${item.sku}">×</button>`;
+      row.innerHTML = `<span>${item.name}<small>Qty ${item.quantity}</small></span><strong>${price(item.price * item.quantity)}</strong><button class="cart-buy" type="button">Buy</button><button type="button" aria-label="Remove ${item.name}" data-remove="${item.sku}">×</button>`;
       itemsNode.append(row);
     }
   }
