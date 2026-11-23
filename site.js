@@ -82,6 +82,7 @@ function kind(pack) {
 
 function accent(pack) {
   const name = pack.sku;
+  if (name.startsWith('cyber-tank-')) return '#b9c2cc';
   const choices = [
     ['rose', '#f08da9'], ['pink', '#ff93d3'], ['violet', '#b99aff'],
     ['amber', '#ffc579'], ['orange', '#ff9a70'], ['yellow', '#ffe477'],
@@ -146,8 +147,15 @@ function posterSku(asset, pack) {
   if (asset === 'tank.custom') return 'custom-color-tank';
   if (asset === 'tank.random_color') return `${previewTankColor(pack)}-classic-tank`;
   if (asset.startsWith('tank.')) {
-    const [, color, shade] = asset.split('.');
-    return `${color}-${shade}-tank`;
+    const [, style, color] = asset.split('.');
+    if (['neon', 'pulse', 'aurora', 'cyber'].includes(style)) {
+      if (style === 'cyber') return pack?.sku?.startsWith('cyber-tank-') ? pack.sku : 'matrix-tank';
+      const source = { amber: 'orange', lime: 'green', rose: 'pink' }[color] || color;
+      const shade = style === 'neon' ? 'light' : style === 'pulse' ? 'dark' : 'classic';
+      return `${source}-${shade}-tank`;
+    }
+    const [, existingColor, shade] = asset.split('.');
+    return `${existingColor}-${shade}-tank`;
   }
   if (asset === 'pet.snake') return 'snake';
   if (asset === 'pet.snake.transparent_black') return 'snake-transparent-black';
@@ -174,8 +182,13 @@ function assetName(asset) {
   if (asset === 'tank.custom') return 'Customizable Color Tank';
   if (asset === 'tank.random_color') return 'Random Color Tank (example shown)';
   if (asset.startsWith('tank.')) {
-    const [, color, shade] = asset.split('.');
-    return `${titleCase(color)} Water Tank — ${titleCase(shade)}`;
+    const [, style, color] = asset.split('.');
+    if (['neon', 'pulse', 'aurora', 'cyber'].includes(style)) {
+      const label = titleCase(color);
+      return style === 'cyber' ? `Cyber Tank — ${label}` : `${label} ${titleCase(style)} Tank`;
+    }
+    const [, existingColor, shade] = asset.split('.');
+    return `${titleCase(existingColor)} Water Tank — ${titleCase(shade)}`;
   }
   if (asset === 'pet.snake') return 'Cyber Leech';
   if (asset === 'pet.snake.transparent_black') return 'Black Glass Leech';

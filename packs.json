@@ -16456,5 +16456,185 @@
       "effect.fire"
     ],
     "preview": "components"
+  },
+  {
+    "sku": "neon-amber-tank",
+    "name": "Amber Neon Glass Tank",
+    "category": "tank",
+    "description": "A luminous animated tank with a neon-tinted moving wall atmosphere. This amber edition is sold as a standalone tank.",
+    "assets": [
+      "tank.neon.amber"
+    ]
+  },
+  {
+    "sku": "neon-blue-tank",
+    "name": "Blue Neon Glass Tank",
+    "category": "tank",
+    "description": "A luminous animated tank with a neon-tinted moving wall atmosphere. This blue edition is sold as a standalone tank.",
+    "assets": [
+      "tank.neon.blue"
+    ]
+  },
+  {
+    "sku": "neon-lime-tank",
+    "name": "Lime Neon Glass Tank",
+    "category": "tank",
+    "description": "A luminous animated tank with a neon-tinted moving wall atmosphere. This lime edition is sold as a standalone tank.",
+    "assets": [
+      "tank.neon.lime"
+    ]
+  },
+  {
+    "sku": "neon-rose-tank",
+    "name": "Rose Neon Glass Tank",
+    "category": "tank",
+    "description": "A luminous animated tank with a neon-tinted moving wall atmosphere. This rose edition is sold as a standalone tank.",
+    "assets": [
+      "tank.neon.rose"
+    ]
+  },
+  {
+    "sku": "neon-violet-tank",
+    "name": "Violet Neon Glass Tank",
+    "category": "tank",
+    "description": "A luminous animated tank with a neon-tinted moving wall atmosphere. This violet edition is sold as a standalone tank.",
+    "assets": [
+      "tank.neon.violet"
+    ]
+  },
+  {
+    "sku": "pulse-amber-tank",
+    "name": "Amber Pulse Glass Tank",
+    "category": "tank",
+    "description": "A dark animated tank with a slow pulse moving across its walls. This amber edition is sold as a standalone tank.",
+    "assets": [
+      "tank.pulse.amber"
+    ]
+  },
+  {
+    "sku": "pulse-blue-tank",
+    "name": "Blue Pulse Glass Tank",
+    "category": "tank",
+    "description": "A dark animated tank with a slow pulse moving across its walls. This blue edition is sold as a standalone tank.",
+    "assets": [
+      "tank.pulse.blue"
+    ]
+  },
+  {
+    "sku": "pulse-lime-tank",
+    "name": "Lime Pulse Glass Tank",
+    "category": "tank",
+    "description": "A dark animated tank with a slow pulse moving across its walls. This lime edition is sold as a standalone tank.",
+    "assets": [
+      "tank.pulse.lime"
+    ]
+  },
+  {
+    "sku": "pulse-rose-tank",
+    "name": "Rose Pulse Glass Tank",
+    "category": "tank",
+    "description": "A dark animated tank with a slow pulse moving across its walls. This rose edition is sold as a standalone tank.",
+    "assets": [
+      "tank.pulse.rose"
+    ]
+  },
+  {
+    "sku": "pulse-violet-tank",
+    "name": "Violet Pulse Glass Tank",
+    "category": "tank",
+    "description": "A dark animated tank with a slow pulse moving across its walls. This violet edition is sold as a standalone tank.",
+    "assets": [
+      "tank.pulse.violet"
+    ]
+  },
+  {
+    "sku": "aurora-amber-tank",
+    "name": "Amber Aurora Glass Tank",
+    "category": "tank",
+    "description": "An animated tank with a soft aurora-like wall treatment. This amber edition is sold as a standalone tank.",
+    "assets": [
+      "tank.aurora.amber"
+    ]
+  },
+  {
+    "sku": "aurora-blue-tank",
+    "name": "Blue Aurora Glass Tank",
+    "category": "tank",
+    "description": "An animated tank with a soft aurora-like wall treatment. This blue edition is sold as a standalone tank.",
+    "assets": [
+      "tank.aurora.blue"
+    ]
+  },
+  {
+    "sku": "aurora-lime-tank",
+    "name": "Lime Aurora Glass Tank",
+    "category": "tank",
+    "description": "An animated tank with a soft aurora-like wall treatment. This lime edition is sold as a standalone tank.",
+    "assets": [
+      "tank.aurora.lime"
+    ]
+  },
+  {
+    "sku": "aurora-rose-tank",
+    "name": "Rose Aurora Glass Tank",
+    "category": "tank",
+    "description": "An animated tank with a soft aurora-like wall treatment. This rose edition is sold as a standalone tank.",
+    "assets": [
+      "tank.aurora.rose"
+    ]
+  },
+  {
+    "sku": "aurora-violet-tank",
+    "name": "Violet Aurora Glass Tank",
+    "category": "tank",
+    "description": "An animated tank with a soft aurora-like wall treatment. This violet edition is sold as a standalone tank.",
+    "assets": [
+      "tank.aurora.violet"
+    ]
+  },
+  {
+    "sku": "cyber-tank-amber",
+    "name": "Cyber Tank — Amber",
+    "category": "tank",
+    "description": "The Cyber Tank in a amber color treatment, with its animated digital-wall atmosphere.",
+    "assets": [
+      "tank.cyber.amber"
+    ]
+  },
+  {
+    "sku": "cyber-tank-blue",
+    "name": "Cyber Tank — Blue",
+    "category": "tank",
+    "description": "The Cyber Tank in a blue color treatment, with its animated digital-wall atmosphere.",
+    "assets": [
+      "tank.cyber.blue"
+    ]
+  },
+  {
+    "sku": "cyber-tank-lime",
+    "name": "Cyber Tank — Lime",
+    "category": "tank",
+    "description": "The Cyber Tank in a lime color treatment, with its animated digital-wall atmosphere.",
+    "assets": [
+      "tank.cyber.lime"
+    ]
+  },
+  {
+    "sku": "cyber-tank-rose",
+    "name": "Cyber Tank — Rose",
+    "category": "tank",
+    "description": "The Cyber Tank in a rose color treatment, with its animated digital-wall atmosphere.",
+    "assets": [
+      "tank.cyber.rose"
+    ]
+  },
+  {
+    "sku": "cyber-tank-violet",
+    "name": "Cyber Tank — Violet",
+    "category": "tank",
+    "description": "The Cyber Tank in a violet color treatment, with its animated digital-wall atmosphere.",
+    "assets": [
+      "tank.cyber.violet"
+    ]
   }
 ]
