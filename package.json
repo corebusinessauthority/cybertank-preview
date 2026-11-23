@@ -1,0 +1,9 @@
+{
+  "name": "cybertank-preview",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node --check src/app.js && node --check scripts/build.mjs"
+  }
+}
