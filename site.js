@@ -317,33 +317,20 @@ async function renderDetail(packs) {
 
 const header = document.querySelector('.site-header');
 const categoryTrigger = header?.querySelector('.category-trigger');
-const categoryNav = header?.querySelector('.header-categories');
+const backToTop = header?.querySelector('.back-to-top');
 if (header && categoryTrigger) {
-  let closeTimer;
-  const setOpen = open => {
-    clearTimeout(closeTimer);
-    header.classList.toggle('is-open', open);
-    categoryTrigger.setAttribute('aria-expanded', String(open));
+  const syncHeader = () => {
+    const condensed = window.scrollY > 120;
+    header.classList.toggle('is-condensed', condensed);
+    categoryTrigger.setAttribute('aria-expanded', String(!condensed));
+    if (backToTop) backToTop.hidden = !condensed;
   };
-  const scheduleClose = () => {
-    if (matchMedia('(hover: hover) and (pointer: fine)').matches)
-      closeTimer = setTimeout(() => setOpen(false), 120);
-  };
-  categoryTrigger.addEventListener('pointerenter', () => setOpen(true));
-  categoryTrigger.addEventListener('pointerleave', scheduleClose);
-  categoryNav?.addEventListener('pointerenter', () => setOpen(true));
-  categoryNav?.addEventListener('pointerleave', scheduleClose);
-  header.addEventListener('focusin', () => setOpen(true));
-  header.addEventListener('focusout', event => {
-    if (!header.contains(event.relatedTarget)) setOpen(false);
+  window.addEventListener('scroll', syncHeader, { passive: true });
+  categoryTrigger.addEventListener('click', () => {
+    if (window.scrollY > 120) window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-  categoryTrigger.addEventListener('click', () => setOpen(true));
-  document.addEventListener('pointerdown', event => {
-    if (!header.contains(event.target)) setOpen(false);
-  });
-  header.addEventListener('keydown', event => {
-    if (event.key === 'Escape') { categoryTrigger.focus(); setOpen(false); }
-  });
+  backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  syncHeader();
 }
 
 getPacks().then(packs => page === 'catalog' ? renderCatalog(packs) : renderDetail(packs))

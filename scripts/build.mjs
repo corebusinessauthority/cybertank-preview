@@ -42,8 +42,8 @@ for (const pack of packs) {
   <meta name="theme-color" content="#080a10">
   <meta name="description" content="Watch the ${escapeHtml(pack.name)} edition of CyberPets in motion.">
   <title>${escapeHtml(pack.name)} · CyberPets preview</title>
-  <link rel="stylesheet" href="../../style.css?v=73">
-  <script type="module" src="../../site.js?v=76"></script>
+  <link rel="stylesheet" href="../../style.css?v=74">
+  <script type="module" src="../../site.js?v=77"></script>
 </head>
 <body data-page="detail" data-root="../../" data-sku="${pack.sku}">
   <header class="site-header">
