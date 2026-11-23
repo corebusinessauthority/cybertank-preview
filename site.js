@@ -2,7 +2,7 @@ const root = document.body.dataset.root || './';
 const page = document.body.dataset.page;
 const sku = document.body.dataset.sku;
 const CART_KEY = 'cyberpets-preview-cart';
-const CATALOG_VERSION = '88';
+const CATALOG_VERSION = '89';
 
 function readCart() {
   try {
@@ -141,7 +141,7 @@ function cardArt(pack) {
     gallery.className = 'card-photos card-photos--hue';
     for (let frame = 1; frame <= 4; frame++) {
       const photo = document.createElement('img');
-      photo.src = `${root}posters/smiley-hue-${frame}.jpg`;
+      photo.src = `${root}posters/smiley-hue-${frame}.jpg?v=${CATALOG_VERSION}`;
       photo.alt = `Hue Smiley color ${frame}`;
       photo.loading = 'lazy';
       gallery.append(photo);
@@ -154,7 +154,7 @@ function cardArt(pack) {
   gallery.className = `card-photos${featured.length > 1 ? ` card-photos--mosaic card-photos--${featured.length}` : ''}`;
   for (const asset of featured) {
     const photo = document.createElement('img');
-    photo.src = `${root}posters/${encodeURIComponent(posterSku(asset, pack))}.jpg`;
+    photo.src = `${root}posters/${encodeURIComponent(posterSku(asset, pack))}.jpg?v=${CATALOG_VERSION}`;
     photo.alt = assetName(asset);
     photo.loading = 'lazy';
     gallery.append(photo);
@@ -404,8 +404,8 @@ async function renderDetail(packs, addToCart) {
         for (let frame = 1; frame <= (asset === 'pet.smiley.hue' ? 4 : 1); frame++) {
           const photo = document.createElement('img');
           photo.src = asset === 'pet.smiley.hue'
-            ? `${root}posters/smiley-hue-${frame}.jpg`
-            : `${root}posters/${encodeURIComponent(posterSku(asset, pack))}.jpg`;
+            ? `${root}posters/smiley-hue-${frame}.jpg?v=${CATALOG_VERSION}`
+            : `${root}posters/${encodeURIComponent(posterSku(asset, pack))}.jpg?v=${CATALOG_VERSION}`;
           photo.alt = asset === 'pet.smiley.hue' ? `Hue Smiley color ${frame}` : assetName(asset);
           photo.loading = 'lazy';
           gallery.append(photo);
@@ -439,7 +439,7 @@ async function renderDetail(packs, addToCart) {
     choices.className = 'component-preview__choices';
     const buttons = [];
     function select(asset) {
-      clip.poster = `${root}posters/${encodeURIComponent(posterSku(asset, pack))}.jpg`;
+      clip.poster = `${root}posters/${encodeURIComponent(posterSku(asset, pack))}.jpg?v=${CATALOG_VERSION}`;
       clip.src = `${root}videos/${encodeURIComponent(posterSku(asset, pack))}.mp4`;
       clip.setAttribute('aria-label', `${assetName(asset)} gameplay preview`);
       caption.textContent = assetName(asset);
@@ -467,7 +467,7 @@ async function renderDetail(packs, addToCart) {
   video.playsInline = true;
   video.controls = true;
   video.preload = 'auto';
-  video.poster = `${root}posters/${encodeURIComponent(pack.sku)}.jpg`;
+  video.poster = `${root}posters/${encodeURIComponent(pack.sku)}.jpg?v=${CATALOG_VERSION}`;
   video.setAttribute('aria-label', `${pack.name} gameplay preview`);
   const fallback = document.createElement('div');
   fallback.className = 'video-fallback';
