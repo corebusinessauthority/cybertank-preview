@@ -10,7 +10,7 @@ function readCart() {
   } catch { return []; }
 }
 
-function price(value) { return `$${Number(value || 0).toFixed(2)}`; }
+function price(value) { return `${Number(value || 0).toFixed(2)} USDT`; }
 
 function setupCart(packs) {
   const button = document.getElementById('cart-button');
@@ -20,7 +20,7 @@ function setupCart(packs) {
   drawer.className = 'cart-drawer';
   drawer.hidden = true;
   drawer.setAttribute('aria-label', 'Shopping bag');
-  drawer.innerHTML = '<div class="cart-drawer__head"><h2>Your bag</h2><button class="cart-close" type="button" aria-label="Close shopping bag">×</button></div><div class="cart-items" id="cart-items"></div><div class="cart-drawer__foot"><span>Total</span><strong id="cart-total">$0.00</strong><small>Prices will be added when editions are available for sale.</small></div>';
+  drawer.innerHTML = '<div class="cart-drawer__head"><h2>Your bag</h2><button class="cart-close" type="button" aria-label="Close shopping bag">×</button></div><div class="cart-items" id="cart-items"></div><div class="cart-drawer__foot"><span>Total</span><strong id="cart-total">0.00 USDT</strong><small>Prices are placeholders and can be changed before launch.</small></div>';
   document.body.append(drawer);
   let items = readCart();
   const itemsNode = drawer.querySelector('#cart-items');
@@ -87,7 +87,7 @@ function accent(pack) {
     ['amber', '#ffc579'], ['orange', '#ff9a70'], ['yellow', '#ffe477'],
     ['lime', '#b7ed77'], ['green', '#7fe9ae'], ['blue', '#82baff'],
     ['cyan', '#79e4eb'], ['red', '#fc848b'], ['hue', '#e49bf6'],
-    ['matrix', '#6be6a4'], ['plain', '#8ac9ed'],
+    ['cyber', '#b9c2cc'], ['matrix', '#b9c2cc'], ['plain', '#8ac9ed'],
   ];
   return choices.find(([word]) => name.includes(word))?.[1] || '#b9cedd';
 }
@@ -210,7 +210,11 @@ function card(pack, addToCart) {
   body.append(cardArt(pack));
   const label = document.createElement('span');
   label.className = 'pack-card__name';
-  label.textContent = pack.name;
+  label.append(document.createTextNode(pack.name));
+  const cardPrice = document.createElement('small');
+  cardPrice.className = 'pack-card__price';
+  cardPrice.textContent = price(pack.price);
+  label.append(cardPrice);
   body.append(label);
   const actions = document.createElement('div');
   actions.className = 'card-actions';
@@ -233,6 +237,7 @@ function card(pack, addToCart) {
     event.preventDefault();
     event.stopPropagation();
   });
+  if (pack.sku.includes('hue')) actions.classList.add('is-hue');
   actions.append(add, buy);
   body.append(actions);
   link.append(body);
@@ -312,7 +317,14 @@ async function renderDetail(packs, addToCart) {
   if (!pack) throw new Error('This edition does not exist.');
   document.title = `${pack.name} · CyberPets preview`;
   document.getElementById('pack-name').textContent = pack.name;
+  const detailSide = document.querySelector('.detail-side');
+  if (detailSide) {
+    detailSide.style.setProperty('--accent', accent(pack));
+    if (pack.sku.includes('hue')) detailSide.classList.add('is-hue');
+  }
   document.getElementById('pack-description').textContent = pack.description;
+  const detailPrice = document.getElementById('pack-price');
+  if (detailPrice) detailPrice.textContent = price(pack.price);
   const detailAdd = document.getElementById('detail-add');
   if (detailAdd) detailAdd.addEventListener('click', () => addToCart(pack));
   document.getElementById('pack-note').textContent = pack.assets.some(id => id.startsWith('tank.'))
