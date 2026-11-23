@@ -7,11 +7,9 @@ button { font: inherit; }
 button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
 .site-header { position: sticky; top: 0; z-index: 50; min-height: 94px; padding: 0 clamp(22px, 4vw, 72px); border-bottom: 1px solid #20242d; background: #090d15ef; backdrop-filter: blur(18px); }
 .site-header__main { height: 94px; display: flex; align-items: center; justify-content: center; position: relative; }
-.category-trigger { position: absolute; right: 0; padding: 7px 11px; color: #cfdae5; background: #151d28; border: 1px solid #394856; border-radius: 8px; cursor: pointer; font-size: 14px; }
-.category-trigger:hover { color: white; border-color: #85c5b8; }
-.header-categories { position: absolute; top: 100%; left: 0; right: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; padding: 15px 22px 18px; background: #090d15f7; border-bottom: 1px solid #34414d; box-shadow: 0 14px 25px #0008; opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); transition: opacity .18s, transform .18s, visibility .18s; }
-.site-header.is-condensed .header-categories { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-8px); }
-.back-to-top { position: absolute; right: 77px; width: 34px; height: 34px; display: inline-grid; place-items: center; padding: 0; color: #d7fff8; background: #17252c; border: 1px solid #527d79; border-radius: 50%; cursor: pointer; font-size: 19px; line-height: 1; }
+.header-categories { position: static; display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; padding: 15px 22px 18px; background: #090d15f7; border-bottom: 1px solid #34414d; box-shadow: 0 14px 25px #0008; opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); overflow: hidden; transition: opacity .18s, transform .18s, max-height .18s, padding .18s, border-color .18s; }
+.site-header.is-condensed .header-categories { max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-8px); border-bottom-color: transparent; }
+.back-to-top { position: fixed; right: clamp(18px, 3vw, 42px); bottom: clamp(18px, 3vw, 34px); z-index: 100; width: 42px; height: 42px; display: inline-grid; place-items: center; padding: 0; color: #d7fff8; background: #17252cf2; border: 1px solid #527d79; border-radius: 50%; box-shadow: 0 7px 22px #000a; cursor: pointer; font-size: 21px; line-height: 1; }
 .back-to-top:hover { color: white; border-color: var(--cyan); background: #203b3c; }
 .back-to-top[hidden] { display: none; }
 .wordmark { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font: 700 29px/1 'Space Grotesk', sans-serif; letter-spacing: -.07em; }
@@ -100,5 +98,5 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-
 @media (max-width: 760px) { .detail-grid { grid-template-columns: 1fr; } .detail-side { padding-top: 0; } .detail-side #pack-art { display: none; } .detail-layout { padding-top: 22px; } }
 @media (max-width: 680px) { .card-grid { grid-template-columns: 1fr; } .site-footer { display: block; } .site-footer span { display: block; margin-bottom: 7px; } }
 @media (max-width: 680px) { .catalog-tools { align-items: stretch; flex-direction: column; gap: 6px; margin-top: 12px; } #catalog-search { width: 100%; } }
-@media (max-width: 460px) { .wordmark { font-size: 23px; } .wordmark-icon { width: 48px; height: 48px; } .category-trigger { font-size: 12px; padding: 6px 8px; } .back-to-top { right: 67px; width: 31px; height: 31px; } .header-categories { gap: 6px; padding-inline: 8px; } .filter { padding: 7px 10px; font-size: 13px; } }
+@media (max-width: 460px) { .wordmark { font-size: 23px; } .wordmark-icon { width: 48px; height: 48px; } .back-to-top { width: 38px; height: 38px; } .header-categories { gap: 6px; padding-inline: 8px; } .filter { padding: 7px 10px; font-size: 13px; } }
 @media (prefers-reduced-motion: reduce) { *, *:before, *:after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }

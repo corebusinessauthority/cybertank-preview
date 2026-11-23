@@ -316,20 +316,15 @@ async function renderDetail(packs) {
 }
 
 const header = document.querySelector('.site-header');
-const categoryTrigger = header?.querySelector('.category-trigger');
-const backToTop = header?.querySelector('.back-to-top');
-if (header && categoryTrigger) {
+const backToTop = document.querySelector('.back-to-top');
+if (header && backToTop) {
   const syncHeader = () => {
     const condensed = window.scrollY > 120;
     header.classList.toggle('is-condensed', condensed);
-    categoryTrigger.setAttribute('aria-expanded', String(!condensed));
-    if (backToTop) backToTop.hidden = !condensed;
+    backToTop.hidden = !condensed;
   };
   window.addEventListener('scroll', syncHeader, { passive: true });
-  categoryTrigger.addEventListener('click', () => {
-    if (window.scrollY > 120) window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-  backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   syncHeader();
 }
 
