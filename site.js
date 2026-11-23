@@ -26,24 +26,24 @@ function cardArt(pack) {
   const stage = document.createElement('div');
   stage.className = 'card-stage';
   stage.style.setProperty('--accent', accent(pack));
-  const box = document.createElement('div');
-  box.className = 'card-pack';
-  const front = document.createElement('span');
-  front.className = 'card-pack__front';
   const gallery = document.createElement('span');
   const pictured = picturedAssets(pack);
-  gallery.className = `card-photos${pictured.length > 1 ? ' card-photos--mosaic' : ''}`;
-  if (pictured.length > 12) gallery.classList.add('card-photos--many');
-  for (const asset of pictured) {
+  const featured = pictured.length > 4 ? [...pictured.filter(isCreature).slice(0, 3), ...pictured.filter(isTank).slice(0, 1)] : pictured;
+  gallery.className = `card-photos${featured.length > 1 ? ` card-photos--mosaic card-photos--${featured.length}` : ''}`;
+  for (const asset of featured) {
     const photo = document.createElement('img');
     photo.src = `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
     photo.alt = assetName(asset);
     photo.loading = 'lazy';
     gallery.append(photo);
   }
-  front.append(gallery);
-  box.append(front);
-  stage.append(box);
+  stage.append(gallery);
+  if (pictured.length > featured.length) {
+    const count = document.createElement('span');
+    count.className = 'card-stage__more';
+    count.textContent = `+${pictured.length - featured.length} more`;
+    stage.append(count);
+  }
   return stage;
 }
 
@@ -51,6 +51,7 @@ function posterSku(asset) {
   if (asset === 'tank.matrix') return 'matrix-tank';
   if (asset === 'tank.plain') return 'plain-tank';
   if (asset === 'tank.custom') return 'custom-color-tank';
+  if (asset === 'tank.random_color') return 'blue-classic-tank';
   if (asset.startsWith('tank.')) {
     const [, color, shade] = asset.split('.');
     return `${color}-${shade}-tank`;
@@ -66,12 +67,44 @@ function posterSku(asset) {
 }
 
 function picturedAssets(pack) {
-  return pack.assets.filter(asset => asset.startsWith('tank.') || asset.startsWith('pet.'));
+  const creatures = pack.assets.filter(asset => isCreature(asset) &&
+    (asset !== 'pet.spikeball' || !pack.assets.includes('pet.spikeball.twin')));
+  return [...creatures, ...pack.assets.filter(isTank)];
 }
 
+function isCreature(asset) { return asset.startsWith('pet.'); }
+function isTank(asset) { return asset.startsWith('tank.'); }
+
 function assetName(asset) {
-  return asset.replace(/^(tank|pet)\./, '').replaceAll(/[._]/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+  if (asset === 'tank.matrix') return 'Cyber Tank';
+  if (asset === 'tank.plain') return 'Plain Water Tank';
+  if (asset === 'tank.custom') return 'Customizable Color Tank';
+  if (asset === 'tank.random_color') return 'Random Color Tank (example shown)';
+  if (asset.startsWith('tank.')) {
+    const [, color, shade] = asset.split('.');
+    return `${titleCase(color)} Water Tank — ${titleCase(shade)}`;
+  }
+  if (asset === 'pet.snake') return 'Cyber Leech';
+  if (asset === 'pet.snake.transparent_black') return 'Black Glass Leech';
+  if (asset.startsWith('pet.snake.')) {
+    const [, , style, color] = asset.split('.');
+    return `${titleCase(color)} ${style === 'transparent' ? 'Glass ' : ''}Leech`;
+  }
+  if (asset === 'pet.spikeball') return 'Cyber Spikeball';
+  if (asset === 'pet.spikeball.twin') return 'Cyber + Cyber Twin Set';
+  if (asset.startsWith('pet.spikeball.twins.')) {
+    const variant = asset.slice('pet.spikeball.twins.'.length);
+    if (variant === 'metal_hue') return 'Cyber + Hue Twin Set';
+    if (variant === 'hue') return 'Hue + Hue Twin Set';
+    const [style, color] = variant.split('.');
+    const label = `${titleCase(color)}${style === 'transparent' ? ' Glass' : ''}`;
+    return `${label} + ${label} Twin Set`;
+  }
+  if (asset.startsWith('pet.smiley.')) return `${titleCase(asset.slice('pet.smiley.'.length))} Smiley`;
+  return titleCase(asset.replace(/^(tank|pet)\./, '').replaceAll(/[._]/g, ' '));
 }
+
+function titleCase(value) { return value.replace(/\b\w/g, letter => letter.toUpperCase()); }
 
 function card(pack) {
   const link = document.createElement('a');
@@ -87,18 +120,6 @@ function card(pack) {
   label.textContent = pack.name;
   body.append(label);
   link.append(body);
-  link.addEventListener('pointermove', event => {
-    if (event.pointerType === 'touch') return;
-    const bounds = link.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - .5;
-    const y = (event.clientY - bounds.top) / bounds.height - .5;
-    body.style.setProperty('--tilt-x', `${(-y * 6).toFixed(1)}deg`);
-    body.style.setProperty('--tilt-y', `${(x * 8).toFixed(1)}deg`);
-  });
-  link.addEventListener('pointerleave', () => {
-    body.style.removeProperty('--tilt-x');
-    body.style.removeProperty('--tilt-y');
-  });
   return link;
 }
 
@@ -110,20 +131,34 @@ async function getPacks() {
 
 function renderCatalog(packs) {
   const grid = document.getElementById('card-grid');
-  const count = document.getElementById('result-count');
   const buttons = [...document.querySelectorAll('.filter')];
+  const more = document.createElement('button');
+  more.type = 'button';
+  more.className = 'load-more';
+  more.textContent = 'Show more editions';
+  grid.after(more);
+  let shown = [];
+  let rendered = 0;
+  function addPage() {
+    const next = shown.slice(rendered, rendered + 24);
+    grid.append(...next.map(card));
+    rendered += next.length;
+    more.hidden = rendered >= shown.length;
+  }
   function apply(filter) {
-    const shown = packs.filter(pack => filter === 'all' ||
+    shown = packs.filter(pack => filter === 'all' ||
       (filter === 'pet' ? kind(pack) === 'snake' || kind(pack) === 'ball' || kind(pack) === 'smile' :
         filter === 'tank' ? kind(pack) === 'tank' : pack.category === filter));
-    grid.replaceChildren(...shown.map(card));
-    if (count) count.textContent = `${shown.length} editions`;
+    rendered = 0;
+    grid.replaceChildren();
+    addPage();
     for (const button of buttons) {
       const selected = button.dataset.filter === filter;
       button.classList.toggle('is-active', selected);
       button.setAttribute('aria-pressed', String(selected));
     }
   }
+  more.addEventListener('click', addPage);
   buttons.forEach(button => button.addEventListener('click', () => apply(button.dataset.filter)));
   apply('all');
 }
@@ -140,20 +175,74 @@ async function renderDetail(packs) {
   document.getElementById('pack-art').append(cardArt(pack));
   const contents = document.getElementById('pack-contents');
   if (contents) {
-    for (const asset of picturedAssets(pack)) {
-      const entry = document.createElement('figure');
-      entry.className = 'included-item';
-      const photo = document.createElement('img');
-      photo.src = `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
-      photo.alt = assetName(asset);
-      photo.loading = 'lazy';
-      const name = document.createElement('figcaption');
-      name.textContent = assetName(asset);
-      entry.append(photo, name);
-      contents.append(entry);
+    for (const [title, assets] of [['Creatures', picturedAssets(pack).filter(isCreature)], ['Tanks', pack.assets.filter(isTank)]]) {
+      if (!assets.length) continue;
+      const section = document.createElement('section');
+      section.className = 'included-group';
+      const heading = document.createElement('h3');
+      heading.textContent = `${title} (${assets.length})`;
+      const grid = document.createElement('div');
+      grid.className = 'included-grid';
+      for (const asset of assets) {
+        const entry = document.createElement('figure');
+        entry.className = 'included-item';
+        const photo = document.createElement('img');
+        photo.src = `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
+        photo.alt = assetName(asset);
+        photo.loading = 'lazy';
+        const name = document.createElement('figcaption');
+        name.textContent = assetName(asset);
+        entry.append(photo, name);
+        grid.append(entry);
+      }
+      section.append(heading, grid);
+      contents.append(section);
     }
   }
   const media = document.getElementById('pack-media');
+  if (pack.preview === 'components') {
+    const preview = document.createElement('div');
+    preview.className = 'component-preview';
+    const characters = pack.assets.filter(isCreature).filter(asset =>
+      asset !== 'pet.spikeball' || !pack.assets.includes('pet.spikeball.twin'));
+    const figure = document.createElement('figure');
+    const clip = document.createElement('video');
+    clip.autoplay = true;
+    clip.muted = true;
+    clip.loop = true;
+    clip.playsInline = true;
+    clip.controls = true;
+    clip.preload = 'auto';
+    const caption = document.createElement('figcaption');
+    figure.append(clip, caption);
+    const choices = document.createElement('div');
+    choices.className = 'component-preview__choices';
+    const buttons = [];
+    function select(asset) {
+      clip.poster = `${root}posters/${encodeURIComponent(posterSku(asset))}.jpg`;
+      clip.src = `${root}videos/${encodeURIComponent(posterSku(asset))}.mp4`;
+      clip.setAttribute('aria-label', `${assetName(asset)} gameplay preview`);
+      caption.textContent = assetName(asset);
+      for (const [button, candidate] of buttons) button.setAttribute('aria-pressed', String(candidate === asset));
+      clip.play().catch(() => {});
+    }
+    for (const asset of characters) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'component-preview__choice';
+      button.textContent = assetName(asset);
+      button.addEventListener('click', () => select(asset));
+      buttons.push([button, asset]);
+      choices.append(button);
+    }
+    preview.append(figure, choices);
+    if (characters.length) select(characters[0]);
+    const note = document.createElement('p');
+    note.className = 'component-preview__note';
+    note.textContent = 'Select a creature to watch its native gameplay loop. The complete pack contents are pictured below.';
+    media.append(preview, note);
+    return;
+  }
   const video = document.createElement('video');
   video.autoplay = true;
   video.muted = true;

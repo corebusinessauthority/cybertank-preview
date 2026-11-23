@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -10,7 +10,9 @@ for (const pack of packs) {
   if (!/^[a-z0-9-]+$/.test(pack.sku) || skus.has(pack.sku)) throw new Error(`Invalid or duplicate SKU: ${pack.sku}`);
   skus.add(pack.sku);
 }
-for (const sku of skus) {
+for (const pack of packs) {
+  if (pack.preview === 'components') continue;
+  const sku = pack.sku;
   for (const [directory, extension, minimum] of [['videos', 'mp4', 1000], ['posters', 'jpg', 500]]) {
     const file = path.join(root, directory, `${sku}.${extension}`);
     let size = 0;
@@ -36,8 +38,8 @@ for (const pack of packs) {
   <meta name="theme-color" content="#080a10">
   <meta name="description" content="Watch the ${escapeHtml(pack.name)} edition of CyberPets in motion.">
   <title>${escapeHtml(pack.name)} · CyberPets preview</title>
-  <link rel="stylesheet" href="../../style.css?v=68">
-  <script type="module" src="../../site.js?v=69"></script>
+  <link rel="stylesheet" href="../../style.css?v=70">
+  <script type="module" src="../../site.js?v=73"></script>
 </head>
 <body data-page="detail" data-root="../../" data-sku="${pack.sku}">
   <header class="site-header">
@@ -50,7 +52,7 @@ for (const pack of packs) {
         <div class="detail-heading"><p class="eyebrow">Edition preview</p><h1 id="pack-name"></h1></div>
         <div class="video-shell"><div id="pack-media"></div></div>
         <div class="detail-caption"><span>Footage from the desktop edition</span><span>Looping preview · No download</span></div>
-        <div class="included"><h2>Included in this edition</h2><div class="included-grid" id="pack-contents"></div></div>
+        <div class="included"><h2>Included in this edition</h2><div id="pack-contents"></div></div>
       </section>
       <aside class="detail-side"><div id="pack-art"></div><p class="detail-description" id="pack-description"></p><p class="detail-note" id="pack-note"></p><a class="detail-action" href="../../">Explore another edition</a></aside>
     </div>
@@ -68,10 +70,11 @@ for (const pack of packs) {
 
 for (const [directory, extension] of [['videos', 'mp4'], ['posters', 'jpg']]) {
   await mkdir(path.join(out, directory), { recursive: true });
-  for (const sku of skus)
-    await copyFile(path.join(root, directory, `${sku}.${extension}`), path.join(out, directory, `${sku}.${extension}`));
+  for (const file of await readdir(path.join(root, directory)))
+    if (file.endsWith(`.${extension}`))
+      await copyFile(path.join(root, directory, file), path.join(out, directory, file));
 }
-console.log(`Built ${packs.length} pack routes, videos, and native posters in ${out}`);
+console.log(`Built ${packs.length} pack routes with native component media in ${out}`);
 
 function escapeHtml(value) {
   return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);

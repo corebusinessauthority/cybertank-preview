@@ -14,10 +14,16 @@ const packs = [];
 for (const entry of entries) {
   if (!entry.isDirectory()) continue;
   const raw = await readFile(path.join(source, entry.name, 'pack.json'), 'utf8');
-  const { sku, name, category, description, assets } = JSON.parse(raw);
+  const { sku, name, category, description, assets, preview, for_sale } = JSON.parse(raw);
   if (sku !== entry.name || !Array.isArray(assets)) throw new Error(`Invalid pack ${entry.name}`);
-  packs.push({ sku, name, category, description, assets });
+  if (for_sale === false) continue;
+  packs.push({ sku, name, category, description, assets, preview });
 }
-packs.sort((a, b) => a.name.localeCompare(b.name, 'en'));
+function tier(pack) {
+  if (pack.sku.startsWith('trio-')) return 3;
+  if (pack.category === 'bundle') return 0;
+  return pack.category === 'addon' ? 1 : 2;
+}
+packs.sort((a, b) => tier(a) - tier(b) || a.name.localeCompare(b.name, 'en'));
 await writeFile(path.join(root, 'packs.json'), `${JSON.stringify(packs, null, 2)}\n`);
 console.log(`Imported ${packs.length} pack manifests.`);
