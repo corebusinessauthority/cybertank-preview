@@ -2,6 +2,7 @@ const root = document.body.dataset.root || './';
 const page = document.body.dataset.page;
 const sku = document.body.dataset.sku;
 const CART_KEY = 'cyberpets-preview-cart';
+const CATALOG_VERSION = '86';
 
 function readCart() {
   try {
@@ -299,7 +300,7 @@ function card(pack, addToCart) {
 }
 
 async function getPacks() {
-  const response = await fetch(`${root}packs.json`);
+  const response = await fetch(`${root}packs.json?v=${CATALOG_VERSION}`);
   if (!response.ok) throw new Error('The collection could not be loaded.');
   return (await response.json()).map(pack => ({ ...pack, price: packPrice(pack) }));
 }
